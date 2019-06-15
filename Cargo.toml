@@ -1,0 +1,9 @@
+[package]
+name = "neoark"
+version = "0.1.0"
+authors = ["champii <contact@champii>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
