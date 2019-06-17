@@ -82,16 +82,15 @@ impl Player {
             return None;
         }
 
-        let user = Player::create(
-            Player::new(
-                user.email.clone(),
-                user.username.clone(),
-                user.password.clone(),
-            ),
-            &conn,
+        let mut user = Player::new(
+            user.email.clone(),
+            user.username.clone(),
+            user.password.clone(),
         );
 
-        Planet::create(Planet::new(user.id, "NewPlanet".to_string()), &conn);
+        user.save(&conn);
+
+        Planet::create_for(user.id, conn);
 
         Some(user)
     }

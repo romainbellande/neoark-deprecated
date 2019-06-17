@@ -7,7 +7,7 @@ use rocket::{routes, Route};
 use rocket_contrib::json::{Json, JsonValue};
 
 use super::db;
-use super::models::{Credentials, NewPlayer, Player};
+use super::models::{Credentials, NewPlayer, Player, Planet};
 
 #[post("/register", data = "<player>")]
 fn register(
@@ -46,6 +46,8 @@ fn login(player: Json<Credentials>, connection: db::Connection) -> Result<Json<J
 #[get("/me")]
 fn me(key: ApiKey, connection: db::Connection) -> Result<Json<JsonValue>, NotFound<String>> {
     let player = Player::fetch_by_username(key.0, &connection);
+
+    Planet::fetch_by_player(&player.clone().unwrap().id, &connection).unwrap().refresh(&connection);
 
     match player {
         None => Err(NotFound("Player not found".to_string())),

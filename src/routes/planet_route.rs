@@ -15,8 +15,6 @@ fn get(key: ApiKey, connection: db::Connection) -> Result<Json<Vec<Planet>>, Not
         return Err(NotFound("Player not found".to_string()));
     }
 
-    let player = player.unwrap();
-
     let planets = Planet::list(&connection);
 
     Ok(Json(planets))
@@ -33,7 +31,11 @@ fn get_error() -> Json<JsonValue> {
 }
 
 #[get("/<id>")]
-fn get_one(key: ApiKey, id: i32, connection: db::Connection) -> Result<Json<Planet>, NotFound<String>> {
+fn get_one(
+    key: ApiKey,
+    id: i32,
+    connection: db::Connection,
+) -> Result<Json<Planet>, NotFound<String>> {
     let player = Player::fetch_by_email(key.0, &connection);
 
     if player.is_none() {
@@ -57,8 +59,8 @@ fn get_one(key: ApiKey, id: i32, connection: db::Connection) -> Result<Json<Plan
     Ok(Json(planet))
 }
 
-#[get("/<id>", rank = 2)]
-fn get_one_error(id: i32) -> Json<JsonValue> {
+#[get("/<_id>", rank = 2)]
+fn get_one_error(_id: i32) -> Json<JsonValue> {
     Json(json!(
         {
             "success": false,

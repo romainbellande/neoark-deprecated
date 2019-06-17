@@ -1,0 +1,63 @@
+[
+  {
+    "id": 0,
+    "name": "Metal processing",
+    "speed": 30,
+    "i": [],
+    "o": [
+      {
+        "id": 0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "id": 1,
+    "name": "Crystal processing",
+    "speed": 20,
+    "i": [],
+    "ot": [
+      {
+        "id": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Deutherium processing",
+    "speed": 10,
+    "i": [],
+    "o": [
+      {
+        "id": 2,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Science pack",
+    "speed": 1,
+    "i": [
+      {
+        "id": 0,
+        "amount": 100
+      },
+      {
+        "id": 1,
+        "amount": 100
+      },
+      {
+        "id": 2,
+        "amount": 100
+      }
+    ],
+    "o": [
+      {
+        "id": 3,
+        "amount": 1
+      }
+    ]
+  }
+]

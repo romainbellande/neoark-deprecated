@@ -1,5 +1,14 @@
 # Setup: 
 
+Install postgres
+
+```
+sudo su - postgres
+createuser neroark
+createdb neoark
+```
+
+
 ## Rust:
 
 Install rustup
