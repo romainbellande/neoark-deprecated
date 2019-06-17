@@ -3,7 +3,7 @@ import { shape } from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { Route } from 'react-router-dom';
 
-import routes from '../../../routes';
+import routes from '../../routes';
 
 const styles = theme => ({
   root: {

@@ -6,7 +6,10 @@ import Planet from './Planet';
 export default _.flow([
   withPlanetContext(
     ({ selectedBuildingId }) => ({ selectedBuildingId }),
-    ({ setSelectedBuildingId }) => ({ setSelectedBuildingId })
+    ({ setSelectedBuildingId, upgradeBuildingById }) => ({
+      setSelectedBuildingId,
+      upgradeBuildingById,
+    })
   ),
   withPlanetProvider(),
 ])(Planet);

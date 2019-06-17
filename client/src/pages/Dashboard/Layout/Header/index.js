@@ -16,7 +16,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 
-import ResourcesBar from '../../Planet/ResourcesBar';
+import ResourcesBar from '../../../../components/Planet/ResourcesBar';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 

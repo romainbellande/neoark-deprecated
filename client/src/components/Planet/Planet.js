@@ -5,10 +5,15 @@ import PlanetMap from './PlanetMap';
 import AppDialog from '../AppDialog';
 import Building from './Building';
 
-const Planet = ({ selectedBuildingId, setSelectedBuildingId }) => {
+const Planet = ({ selectedBuildingId, setSelectedBuildingId, upgradeBuildingById }) => {
   const isBuildingOpen = selectedBuildingId !== null;
 
   const onAppDialogClose = () => {
+    setSelectedBuildingId(null);
+  };
+
+  const onBuildingUpgrade = async () => {
+    await upgradeBuildingById(selectedBuildingId);
     setSelectedBuildingId(null);
   };
 
@@ -16,7 +21,7 @@ const Planet = ({ selectedBuildingId, setSelectedBuildingId }) => {
     <div>
       <PlanetMap />
       <AppDialog open={isBuildingOpen} onClose={onAppDialogClose}>
-        {isBuildingOpen && <Building />}
+        {isBuildingOpen && <Building onUpgrade={onBuildingUpgrade} />}
       </AppDialog>
     </div>
   );
@@ -25,6 +30,7 @@ const Planet = ({ selectedBuildingId, setSelectedBuildingId }) => {
 Planet.propTypes = {
   selectedBuildingId: number,
   setSelectedBuildingId: func.isRequired,
+  upgradeBuildingById: func.isRequired,
 };
 
 Planet.defaultProps = {
