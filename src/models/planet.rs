@@ -183,13 +183,6 @@ impl Planet {
         for (key, value) in global_production_context2.iter_mut() {
             value.rate = (value.produced.clone() - value.consumed.clone()) / elapsed.clone();
 
-            for processor in &value.attached_processors {
-                let mut guard = processor.borrow_mut();
-
-                    guard.rate = BigDecimal::from(value.rate.clone());
-                    guard.save(conn);
-            }
-
             prod_res.get_mut(&key).unwrap().net_rate = value.rate.clone();
 
             *total.entry(*key).or_default() += value.produced.clone() - value.consumed.clone()
