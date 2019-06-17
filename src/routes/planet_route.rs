@@ -35,7 +35,7 @@ fn get_one(
     key: ApiKey,
     id: i32,
     connection: db::Connection,
-) -> Result<Json<Planet>, NotFound<String>> {
+) -> Result<Json<JsonValue>, NotFound<String>> {
     let player = Player::fetch_by_email(key.0, &connection);
 
     if player.is_none() {
@@ -56,7 +56,15 @@ fn get_one(
         return Err(NotFound("Bad planet id".to_string()));
     }
 
-    Ok(Json(planet))
+    let (inventory, processors) = planet.refresh(&connection);
+
+    Ok(Json(json!(
+        {
+            "planet": planet,
+            "inventory": inventory,
+            "processors": processors,
+        }
+    )))
 }
 
 #[get("/<_id>", rank = 2)]

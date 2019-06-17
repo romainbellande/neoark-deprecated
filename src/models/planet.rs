@@ -45,12 +45,12 @@ impl Planet {
         Inventory::new(planet.id).save(conn);
     }
 
-    pub fn refresh(&self, conn: &diesel::PgConnection) {
+    pub fn refresh(&self, conn: &diesel::PgConnection) -> (HashMap<i32, f64>, Vec<Processor>) {
         let processors = Processor::list_by_planet(&self.id, conn);
 
         let mut inventory = Inventory::fetch_by_planet(&self.id, conn).unwrap();
 
-        let mut total: HashMap<i32, i32> = serde_json::from_str(&inventory.items).unwrap();
+        let mut total: HashMap<i32, f64> = serde_json::from_str(&inventory.items).unwrap();
 
         let elapsed = SystemTime::now()
             .duration_since(inventory.last_update)
@@ -61,23 +61,25 @@ impl Planet {
         // in hours
         let elapsed = elapsed.as_secs_f64() / 60.0 / 60.0;
 
-        for processor in processors {
+        for processor in &processors {
             let recipe = &RECIPES[&processor.recipe];
 
             let i = &recipe.i;
             let o = &recipe.o;
 
             for consumed in i {
-                *total.entry(consumed.id).or_default() -= (elapsed * (recipe.speed as f64)) as i32;
+                *total.entry(consumed.id).or_default() -= elapsed * (recipe.speed as f64);
             }
 
             for produced in o {
-                *total.entry(produced.id).or_default() += (elapsed * (recipe.speed as f64)) as i32;
+                *total.entry(produced.id).or_default() += elapsed * (recipe.speed as f64);
             }
         }
 
         inventory.items = serde_json::to_string(&total).unwrap();
 
         inventory.save(conn);
+
+        (total, processors)
     }
 }

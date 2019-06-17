@@ -35,3 +35,4 @@ CREATE TABLE processors (
 );
 
 INSERT INTO processors (planet_id, level, upgrade_finish, recipe) VALUES (1, 1, NULL, 0);
+INSERT INTO processors (planet_id, level, upgrade_finish, recipe) VALUES (1, 1, NULL, 1);
