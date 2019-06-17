@@ -46,7 +46,7 @@ impl Server {
     }
 
     fn listen_http() {
-        let assets = std::env::current_dir().unwrap().join("assets/client/dist");
+        let assets = std::env::current_dir().unwrap().join("client/build");
 
         rocket::ignite()
             .mount("/", StaticFiles::from(assets))
