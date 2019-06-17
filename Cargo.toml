@@ -5,18 +5,14 @@ authors = ["champii <contact@champii>"]
 edition = "2018"
 
 [dependencies]
-rand = "*"
 serde = ""
-chrono=""
 serde_derive = ""
-diesel = { version = "1.4.0", features = ["postgres", "numeric"] }
 serde_json = "1.0"
+diesel = { version = "1.4.0", features = ["postgres", "numeric"] }
 diesel-derive-enum = { version = "0.4.4", features = ["postgres"] }
-bigdecimal = { version = "0.0.14", features = ["serde"] }
 orm_macro_derive = { git = "https://gitlab.com/Champii1/diesel-orm.git" }
-ws = "*"
+bigdecimal = { version = "0.0.14", features = ["serde"] }
 rocket = "0.4.1"
-redis = "0.10.0"
 jwt = "0.4.0"
 rust-crypto = "0.2"
 rustc-serialize = "0.3"

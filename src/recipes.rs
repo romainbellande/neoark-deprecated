@@ -1,22 +1,19 @@
-use std::borrow::Cow;
+use bigdecimal::BigDecimal;
 use std::collections::HashMap;
-use std::fs;
 use std::fs::File;
 use std::io::prelude::*;
-use std::io::BufReader;
-use std::path::PathBuf; // Cow = clone on write
 
-const recipes_path: &str = "./client/src/mocks/recipes.json";
+const RECIPES_PATH: &str = "./client/src/mocks/recipes.json";
 
 lazy_static! {
     pub static ref RECIPES: HashMap<i32, Recipe> = {
         let mut m = HashMap::new();
 
-        let mut file = File::open(recipes_path).expect("could not open file");
+        let mut file = File::open(RECIPES_PATH).expect("could not open file");
 
         let mut contents = String::new();
 
-        file.read_to_string(&mut contents);
+        file.read_to_string(&mut contents).unwrap();
 
         let recipes: Vec<Recipe> =
             serde_json::from_str(&contents).expect("Cannot deserialize recipes.json");
@@ -32,7 +29,7 @@ lazy_static! {
 #[derive(Serialize, Deserialize)]
 pub struct Item {
     pub id: i32,
-    pub amount: i32,
+    pub amount: BigDecimal,
 }
 
 #[derive(Serialize, Deserialize)]

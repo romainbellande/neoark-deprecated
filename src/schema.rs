@@ -27,9 +27,11 @@ table! {
 table! {
     processors (id) {
         id -> Int4,
+        player_id -> Int4,
         planet_id -> Int4,
         level -> Int4,
         upgrade_finish -> Nullable<Timestamp>,
+        ratio -> Numeric,
         recipe -> Int4,
     }
 }
@@ -37,6 +39,7 @@ table! {
 joinable!(inventories -> planets (planet_id));
 joinable!(planets -> players (player_id));
 joinable!(processors -> planets (planet_id));
+joinable!(processors -> players (player_id));
 
 allow_tables_to_appear_in_same_query!(
     inventories,
