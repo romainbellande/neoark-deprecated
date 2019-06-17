@@ -3,13 +3,13 @@ table! {
         id -> Int4,
         player_id -> Int4,
         name -> Varchar,
-        iron_mine -> Int4,
     }
 }
 
 table! {
     players (id) {
         id -> Int4,
+        email -> Varchar,
         username -> Varchar,
         password -> Varchar,
     }

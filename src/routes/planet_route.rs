@@ -7,9 +7,9 @@ use rocket::{routes, Route};
 use rocket_contrib::json::{Json, JsonValue};
 
 use super::db;
-use super::models::{NewPlayer, Player, Credentials};
+use super::models::{Planet, NewPlanet};
 
-#[post("/register", data = "<player>")]
+#[post("/planets/register", data = "<player>")]
 fn register(
     player: Json<NewPlayer>,
     connection: db::Connection,
@@ -22,8 +22,8 @@ fn register(
     }
 }
 
-#[post("/login", data = "<player>")]
-fn login(player: Json<Credentials>, connection: db::Connection) -> Result<Json<JsonValue>, Status> {
+#[post("/planets/login", data = "<player>")]
+fn login(player: Json<NewPlayer>, connection: db::Connection) -> Result<Json<JsonValue>, Status> {
     let header: Header = Default::default();
 
     match Player::login(player.into_inner(), &connection) {
@@ -43,7 +43,7 @@ fn login(player: Json<Credentials>, connection: db::Connection) -> Result<Json<J
     }
 }
 
-#[get("/me")]
+#[get("/planets/me")]
 fn me(key: ApiKey, connection: db::Connection) -> Result<Json<JsonValue>, NotFound<String>> {
     let player = Player::fetch_by_username(key.0, &connection);
 
@@ -58,7 +58,7 @@ fn me(key: ApiKey, connection: db::Connection) -> Result<Json<JsonValue>, NotFou
     }
 }
 
-#[get("/me", rank = 2)]
+#[get("/planets/me", rank = 2)]
 fn me_error() -> Json<JsonValue> {
     Json(json!(
         {

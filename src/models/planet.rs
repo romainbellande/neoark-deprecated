@@ -7,7 +7,6 @@ use super::schema::planets;
 pub struct Planet {
     pub player_id: i32,
     pub name: String,
-    pub iron_mine: i32,
 }
 
 impl Planet {
@@ -16,7 +15,6 @@ impl Planet {
             id: -1,
             player_id,
             name,
-            iron_mine: 0,
         }
     }
 }
