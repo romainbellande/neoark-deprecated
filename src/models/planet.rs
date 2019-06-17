@@ -16,7 +16,7 @@ impl Planet {
             id: -1,
             player_id,
             name,
-            iron_mine: 0
+            iron_mine: 0,
         }
     }
 }

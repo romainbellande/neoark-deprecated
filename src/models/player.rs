@@ -71,5 +71,5 @@ impl Player {
 
         Some(res)
     }
-    }
+}
 

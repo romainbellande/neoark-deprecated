@@ -5,20 +5,19 @@ extern crate serde_derive;
 #[macro_use]
 extern crate rocket_contrib;
 #[macro_use]
+extern crate rocket;
+#[macro_use]
 extern crate diesel;
 #[macro_use]
 extern crate orm_macro_derive;
 
+mod db;
 mod models;
+mod routes;
 mod schema;
 mod server;
-mod client;
-mod context;
-mod proto;
 
 use server::Server;
-
-const DATABASE_URL: &str = "postgres://neoark:neoark@localhost/neoark";
 
 fn main() {
     let mut server = Server::new();
