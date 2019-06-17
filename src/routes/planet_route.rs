@@ -56,13 +56,14 @@ fn get_one(
         return Err(NotFound("Bad planet id".to_string()));
     }
 
-    let (inventory, processors) = planet.refresh(&connection);
+    let (inventory, processors, prod) = planet.refresh(&connection);
 
     Ok(Json(json!(
         {
             "planet": planet,
             "inventory": inventory,
             "processors": processors,
+            "production": prod,
         }
     )))
 }

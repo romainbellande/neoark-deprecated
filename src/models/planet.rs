@@ -10,7 +10,7 @@ use super::schema;
 use super::schema::planets;
 use super::{Inventory, Processor};
 
-#[derive(Default, Debug)]
+#[derive(Default, Debug, Clone)]
 pub struct ProductionContext {
     pub id: i32,
     pub produced: BigDecimal,
@@ -19,12 +19,28 @@ pub struct ProductionContext {
     pub rate: BigDecimal,
     pub attached_processors: Vec<Rc<RefCell<Processor>>>,
 }
-
 impl ProductionContext {
     pub fn new(id: i32) -> ProductionContext {
         ProductionContext {
             id,
             ..Default::default()
+        }
+    }
+}
+
+#[derive(Default, Debug, Clone, Serialize, Deserialize)]
+pub struct ProductionContextRes {
+    pub id: i32,
+    pub rate: BigDecimal,
+    pub net_rate: BigDecimal,
+}
+
+impl ProductionContextRes {
+    pub fn from_details(pc: ProductionContext) -> ProductionContextRes {
+        ProductionContextRes {
+            id: pc.id,
+            rate: pc.rate.clone(),
+            net_rate: pc.rate.clone(),
         }
     }
 }
@@ -111,7 +127,11 @@ impl Planet {
     pub fn refresh(
         &self,
         conn: &diesel::PgConnection,
-    ) -> (HashMap<i32, BigDecimal>, Vec<Processor>) {
+    ) -> (
+        HashMap<i32, BigDecimal>,
+        Vec<Processor>,
+        HashMap<i32, ProductionContextRes>,
+    ) {
         let mut _processors = Processor::list_by_planet(&self.id, conn);
 
         let mut processors = vec![];
@@ -135,6 +155,8 @@ impl Planet {
         let mut global_production_context =
             Self::get_production_context(processors.clone(), elapsed.clone(), false);
 
+        let mut prod_res = HashMap::new();
+
         for (_, value) in global_production_context.iter_mut() {
             value.ratio = BigDecimal::from(1.0);
 
@@ -152,14 +174,24 @@ impl Planet {
                     guard.save(conn);
                 }
             }
-
-            // *total.entry(*key).or_default() += value * ratio;
+            prod_res.insert(value.id.clone(), ProductionContextRes::from_details(value.clone()));
         }
 
-        let global_production_context2 =
-            Self::get_production_context(processors.clone(), elapsed, true);
+        let mut global_production_context2 =
+            Self::get_production_context(processors.clone(), elapsed.clone(), true);
 
-        for (key, value) in global_production_context2.iter() {
+        for (key, value) in global_production_context2.iter_mut() {
+            value.rate = (value.produced.clone() - value.consumed.clone()) / elapsed.clone();
+
+            for processor in &value.attached_processors {
+                let mut guard = processor.borrow_mut();
+
+                    guard.rate = BigDecimal::from(value.rate.clone());
+                    guard.save(conn);
+            }
+
+            prod_res.get_mut(&key).unwrap().net_rate = value.rate.clone();
+
             *total.entry(*key).or_default() += value.produced.clone() - value.consumed.clone()
         }
 
@@ -172,6 +204,6 @@ impl Planet {
 
         inventory.save(conn);
 
-        (total, _processors)
+        (total, _processors, prod_res)
     }
 }

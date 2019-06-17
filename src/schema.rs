@@ -32,6 +32,8 @@ table! {
         level -> Int4,
         upgrade_finish -> Nullable<Timestamp>,
         ratio -> Numeric,
+        rate -> Numeric,
+        net_rate -> Numeric,
         recipe -> Int4,
     }
 }

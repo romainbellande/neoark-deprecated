@@ -12,6 +12,8 @@ pub struct Processor {
     pub level: i32,
     pub upgrade_finish: Option<SystemTime>,
     pub ratio: BigDecimal,
+    pub rate: BigDecimal,
+    pub net_rate: BigDecimal,
     pub recipe: i32,
 }
 
@@ -24,6 +26,8 @@ impl Processor {
             level: 0,
             upgrade_finish: None,
             ratio: BigDecimal::zero(),
+            rate: BigDecimal::zero(),
+            net_rate: BigDecimal::zero(),
             recipe: -1,
         }
     }
