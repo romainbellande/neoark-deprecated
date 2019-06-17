@@ -1,0 +1,34 @@
+[
+  {
+    "id": 0,
+    "name": "Metal miner",
+    "leveling": [
+      {
+        "level": 1,
+        "duration": 30000,
+        "productionByHour": 200,
+        "storage": 3000,
+        "cost": [
+          {
+            "id": 0,
+            "type": {
+              "id": 0,
+              "name": "metal",
+              "description": "metal mines are of primary importance to all emerging and established empires."
+            },
+            "quantity": 200
+          },
+          {
+            "id": 1,
+            "type": {
+              "id:": 1,
+              "name": "crystal",
+              "description": "Crystals are the main resource used to build electronic circuits and form certain alloy compounds"
+            },
+            "quantity": 300
+          }
+        ]
+      }
+    ]
+  }
+]

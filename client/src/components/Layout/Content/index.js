@@ -1,7 +1,9 @@
 import React from 'react';
 import { shape } from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import ResourcesBar from '../../Planet/ResourcesBar';
+import { Route } from 'react-router-dom';
+
+import routes from '../../../routes';
 
 const styles = theme => ({
   root: {
@@ -32,7 +34,9 @@ const styles = theme => ({
 const Content = ({ classes }) => {
   return (
     <div className={classes.root}>
-      <ResourcesBar />
+      {routes.map(({ slug, ...route }) => (
+        <Route key={`route-${slug}`} {...route} />
+      ))}
     </div>
   );
 };

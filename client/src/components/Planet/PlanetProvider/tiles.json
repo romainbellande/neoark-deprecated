@@ -1,0 +1,213 @@
+[
+    {
+        "id": "5d06c98a4a5c4368a8cea7fa",
+        "type": "metal",
+        "x": 0,
+        "y": 0
+    },
+    {
+        "id": "5d06c98a4566e5eb31ce0c4b",
+        "type": "metal",
+        "x": 0,
+        "y": 1
+    },
+    {
+        "id": "5d06c98afde21bcb5f9821ba",
+        "type": "metal",
+        "x": 0,
+        "y": 2
+    },
+    {
+        "id": "5d06c98a743d2165c5bd7399",
+        "type": "metal",
+        "x": 0,
+        "y": 3
+    },
+    {
+        "id": "5d06c98a32f2d0244b61aaa8",
+        "type": "metal",
+        "x": 0,
+        "y": 4
+    },
+    {
+        "id": "5d06c98a1411664e436035a6",
+        "type": "metal",
+        "x": 0,
+        "y": 5
+    },
+    {
+        "id": "5d06c98acf2e7ad5079ecf3f",
+        "type": "metal",
+        "x": 0,
+        "y": 6
+    },
+    {
+        "id": "5d06c99fb533a296410a66fb",
+        "type": "metal",
+        "x": 1,
+        "y": 0
+    },
+    {
+        "id": "5d06c99ff6302736048bf2c0",
+        "type": "metal",
+        "x": 1,
+        "y": 1
+    },
+    {
+        "id": "5d06c99fdb88536f062ed966",
+        "type": "metal",
+        "x": 1,
+        "y": 2
+    },
+    {
+        "id": "5d06c99f330e8aa03deb1a86",
+        "type": "metal",
+        "x": 1,
+        "y": 3
+    },
+    {
+        "id": "5d06c99fa42128af4e802b7e",
+        "type": "metal",
+        "x": 1,
+        "y": 4
+    },
+    {
+        "id": "5d06c99f1527a646b7ad4cdd",
+        "type": "metal",
+        "x": 1,
+        "y": 5
+    },
+    {
+        "id": "5d06c99fcce72e83f8bff37c",
+        "type": "metal_miner",
+        "buildingId": 0,
+        "x": 1,
+        "y": 6
+    },
+    {
+        "id": "5d06c9aad0656a94920863de",
+        "type": "metal",
+        "x": 2,
+        "y": 0
+    },
+    {
+        "id": "5d06c9aaaa2272f2ff8fc7a9",
+        "type": "metal",
+        "x": 2,
+        "y": 1
+    },
+    {
+        "id": "5d06c9aafedea1b1b6d7ed49",
+        "type": "metal",
+        "x": 2,
+        "y": 2
+    },
+    {
+        "id": "5d06c9aad0bf09642bc9f974",
+        "type": "metal",
+        "x": 2,
+        "y": 3
+    },
+    {
+        "id": "5d06c9aa30ad95f21dd003dc",
+        "type": "metal",
+        "x": 2,
+        "y": 4
+    },
+    {
+        "id": "5d06c9aa8dff5bcc771027b9",
+        "type": "metal",
+        "x": 2,
+        "y": 5
+    },
+    {
+        "id": "5d06c9aa3675117a592465f7",
+        "type": "metal",
+        "x": 2,
+        "y": 6
+    },
+    {
+        "id": "5d06c9b514496e367bd210f3",
+        "type": "metal",
+        "x": 3,
+        "y": 0
+    },
+    {
+        "id": "5d06c9b5edbaa9592f672ff9",
+        "type": "metal",
+        "x": 3,
+        "y": 1
+    },
+    {
+        "id": "5d06c9b5971b33be7ec5d083",
+        "type": "metal",
+        "x": 3,
+        "y": 2
+    },
+    {
+        "id": "5d06c9b56320968d238b883a",
+        "type": "metal",
+        "x": 3,
+        "y": 3
+    },
+    {
+        "id": "5d06c9b5fe54162eae8ae1a8",
+        "type": "metal",
+        "x": 3,
+        "y": 4
+    },
+    {
+        "id": "5d06c9b52fd481896ffb27de",
+        "type": "metal",
+        "x": 3,
+        "y": 5
+    },
+    {
+        "id": "5d06c9b5de90b77713ceed88",
+        "type": "metal",
+        "x": 3,
+        "y": 6
+    },
+    {
+        "id": "5d06c9bd9d08f505ee62a8c6",
+        "type": "metal",
+        "x": 4,
+        "y": 0
+    },
+    {
+        "id": "5d06c9bd5a14a9003eac24bf",
+        "type": "metal",
+        "x": 4,
+        "y": 1
+    },
+    {
+        "id": "5d06c9bd093bf1060c8e847d",
+        "type": "metal",
+        "x": 4,
+        "y": 2
+    },
+    {
+        "id": "5d06c9bdab2fedf9a8529aac",
+        "type": "metal",
+        "x": 4,
+        "y": 3
+    },
+    {
+        "id": "5d06c9bd48ba66811af302e7",
+        "type": "metal",
+        "x": 4,
+        "y": 4
+    },
+    {
+        "id": "5d06c9bdf76fdf3346a0744a",
+        "type": "metal",
+        "x": 4,
+        "y": 5
+    },
+    {
+        "id": "5d06c9bda29f3b5e0e326734",
+        "type": "metal",
+        "x": 4,
+        "y": 6
+    }
+]
