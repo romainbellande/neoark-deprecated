@@ -1,4 +1,4 @@
-use bigdecimal::BigDecimal;
+use bigdecimal::{BigDecimal, ToPrimitive};
 use diesel::prelude::*;
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -128,7 +128,7 @@ impl Planet {
         &self,
         conn: &diesel::PgConnection,
     ) -> (
-        HashMap<i32, BigDecimal>,
+        HashMap<i32, i32>,
         Vec<Processor>,
         HashMap<i32, ProductionContextRes>,
     ) {
@@ -174,7 +174,10 @@ impl Planet {
                     guard.save(conn);
                 }
             }
-            prod_res.insert(value.id.clone(), ProductionContextRes::from_details(value.clone()));
+            prod_res.insert(
+                value.id.clone(),
+                ProductionContextRes::from_details(value.clone()),
+            );
         }
 
         let mut global_production_context2 =
@@ -197,6 +200,12 @@ impl Planet {
 
         inventory.save(conn);
 
-        (total, _processors, prod_res)
+        let mut total_cell = HashMap::new();
+
+        for (k, v) in total.iter() {
+            total_cell.insert(k.clone(), v.to_i32().unwrap());
+        }
+
+        (total_cell, _processors, prod_res)
     }
 }
