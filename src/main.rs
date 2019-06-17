@@ -3,19 +3,25 @@
 #[macro_use]
 extern crate serde_derive;
 #[macro_use]
+extern crate rocket_contrib;
+#[macro_use]
 extern crate diesel;
 #[macro_use]
 extern crate orm_macro_derive;
 
 mod models;
 mod schema;
+mod server;
+mod client;
+mod context;
+mod proto;
 
-use diesel::pg::PgConnection;
-use diesel::prelude::*;
+use server::Server;
 
 const DATABASE_URL: &str = "postgres://neoark:neoark@localhost/neoark";
 
 fn main() {
-    let _ = PgConnection::establish(&DATABASE_URL)
-        .expect(&format!("Error connecting to {}", DATABASE_URL));
+    let mut server = Server::new();
+
+    server.run();
 }
