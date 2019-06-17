@@ -22,7 +22,7 @@ const categories = [
       { id: 'Q.G.', icon: <PeopleIcon />, active: true },
       { id: 'Planets', icon: <DnsRoundedIcon /> },
       { id: 'Research', icon: <PublicIcon /> },
-      { id: 'Commandants', icon: <SettingsEthernetIcon /> },
+      { id: 'Fleet', icon: <SettingsEthernetIcon /> },
       { id: 'Settings', icon: <SettingsInputComponentIcon /> },
     ],
   },

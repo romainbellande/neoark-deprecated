@@ -1,12 +1,10 @@
 import React from 'react';
 
 import './App.css';
-import Paperbase from './Layout'
+import Paperbase from './components/Layout';
 
 function App() {
-  return (
-    <Paperbase />
-  );
+  return <Paperbase />;
 }
 
 export default App;

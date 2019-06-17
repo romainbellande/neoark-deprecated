@@ -16,6 +16,8 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 
+import ResourcesBar from '../../Planet/ResourcesBar';
+
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 
 const styles = theme => ({
@@ -69,7 +71,9 @@ const Header = props => {
                 </IconButton>
               </Grid>
             </Hidden>
-            <Grid item xs />
+            <Grid item xs>
+              <ResourcesBar />
+            </Grid>
             <Grid item>
               <Typography className={classes.link} component="a" href="#">
                 Go to docs
@@ -94,12 +98,7 @@ const Header = props => {
           </Grid>
         </Toolbar>
       </AppBar>
-      <AppBar
-        component="div"
-        className={classes.secondaryBar}
-        position="static"
-        elevation={0}
-      >
+      <AppBar component="div" className={classes.secondaryBar} position="static" elevation={0}>
         <Toolbar>
           <Grid container alignItems="center" spacing={1}>
             <Grid item xs>
