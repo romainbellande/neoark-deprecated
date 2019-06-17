@@ -7,7 +7,7 @@ use rocket::{routes, Route};
 use rocket_contrib::json::{Json, JsonValue};
 
 use super::db;
-use super::models::{NewPlayer, Player, Credentials};
+use super::models::{Credentials, NewPlayer, Player};
 
 #[post("/register", data = "<player>")]
 fn register(
@@ -30,7 +30,7 @@ fn login(player: Json<Credentials>, connection: db::Connection) -> Result<Json<J
         None => Err(Status::NotFound),
         Some(player) => {
             let claims = Registered {
-                sub: Some(player.username.into()),
+                sub: Some(player.email.into()),
                 ..Default::default()
             };
             let token = Token::new(header, claims);
@@ -52,6 +52,7 @@ fn me(key: ApiKey, connection: db::Connection) -> Result<Json<JsonValue>, NotFou
         Some(player) => Ok(Json(json!(
             {
                 "id": player.id,
+                "email": player.email,
                 "username": player.username,
             }
         ))),

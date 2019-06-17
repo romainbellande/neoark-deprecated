@@ -21,6 +21,7 @@ impl Server {
             .manage(db::connect())
             .mount("/", StaticFiles::from(assets))
             .mount("/api/v1/players", player_route::mount())
+            .mount("/api/v1/planets", planet_route::mount())
             .launch();
     }
 }

@@ -1,65 +1,64 @@
 use super::auth::ApiKey;
-use crypto::sha2::Sha256;
-use jwt::{Header, Registered, Token};
-use rocket::http::Status;
 use rocket::response::status::NotFound;
 use rocket::{routes, Route};
 use rocket_contrib::json::{Json, JsonValue};
 
 use super::db;
-use super::models::{Planet, NewPlanet};
+use super::models::Planet;
+use super::models::Player;
 
-#[post("/planets/register", data = "<player>")]
-fn register(
-    player: Json<NewPlayer>,
-    connection: db::Connection,
-) -> Result<Json<Player>, NotFound<String>> {
-    let res = Player::subscribe(player.into_inner(), &connection);
+#[get("/")]
+fn get(key: ApiKey, connection: db::Connection) -> Result<Json<Vec<Planet>>, NotFound<String>> {
+    let player = Player::fetch_by_email(key.0, &connection);
 
-    match res {
-        Some(player) => Ok(Json(player)),
-        None => Err(NotFound("Player already exists".to_string())),
+    if player.is_none() {
+        return Err(NotFound("Player not found".to_string()));
     }
+
+    let player = player.unwrap();
+
+    let planets = Planet::list(&connection);
+
+    Ok(Json(planets))
 }
 
-#[post("/planets/login", data = "<player>")]
-fn login(player: Json<NewPlayer>, connection: db::Connection) -> Result<Json<JsonValue>, Status> {
-    let header: Header = Default::default();
-
-    match Player::login(player.into_inner(), &connection) {
-        None => Err(Status::NotFound),
-        Some(player) => {
-            let claims = Registered {
-                sub: Some(player.username.into()),
-                ..Default::default()
-            };
-            let token = Token::new(header, claims);
-
-            token
-                .signed(b"secret_key", Sha256::new())
-                .map(|message| Json(json!({ "success": true, "token": message })))
-                .map_err(|_| Status::InternalServerError)
+#[get("/", rank = 2)]
+fn get_error() -> Json<JsonValue> {
+    Json(json!(
+        {
+            "success": false,
+            "message": "Not authorized"
         }
-    }
+    ))
 }
 
-#[get("/planets/me")]
-fn me(key: ApiKey, connection: db::Connection) -> Result<Json<JsonValue>, NotFound<String>> {
-    let player = Player::fetch_by_username(key.0, &connection);
+#[get("/<id>")]
+fn get_one(key: ApiKey, id: i32, connection: db::Connection) -> Result<Json<Planet>, NotFound<String>> {
+    let player = Player::fetch_by_email(key.0, &connection);
 
-    match player {
-        None => Err(NotFound("Player not found".to_string())),
-        Some(player) => Ok(Json(json!(
-            {
-                "id": player.id,
-                "username": player.username,
-            }
-        ))),
+    if player.is_none() {
+        return Err(NotFound("Player not found".to_string()));
     }
+
+    let player = player.unwrap();
+
+    let planet = Planet::fetch(id, &connection);
+
+    if planet.is_none() {
+        return Err(NotFound("Planet not found".to_string()));
+    }
+
+    let planet = planet.unwrap();
+
+    if planet.player_id != player.id {
+        return Err(NotFound("Bad planet id".to_string()));
+    }
+
+    Ok(Json(planet))
 }
 
-#[get("/planets/me", rank = 2)]
-fn me_error() -> Json<JsonValue> {
+#[get("/<id>", rank = 2)]
+fn get_one_error(id: i32) -> Json<JsonValue> {
     Json(json!(
         {
             "success": false,
@@ -69,5 +68,5 @@ fn me_error() -> Json<JsonValue> {
 }
 
 pub fn mount() -> Vec<Route> {
-    routes![register, login, me, me_error]
+    routes![get, get_error, get_one, get_one_error]
 }
