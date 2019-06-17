@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { shape } from 'prop-types';
 import clsx from 'clsx';
 import { withStyles } from '@material-ui/core/styles';
@@ -9,22 +10,13 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import HomeIcon from '@material-ui/icons/Home';
-import PeopleIcon from '@material-ui/icons/People';
-import DnsRoundedIcon from '@material-ui/icons/DnsRounded';
-import PublicIcon from '@material-ui/icons/Public';
-import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
-import SettingsInputComponentIcon from '@material-ui/icons/SettingsInputComponent';
+
+import { categoryRoutes } from '../../routes';
 
 const categories = [
   {
     id: 'Develop',
-    children: [
-      { id: 'Q.G.', icon: <PeopleIcon />, active: true },
-      { id: 'Planets', icon: <DnsRoundedIcon /> },
-      { id: 'Research', icon: <PublicIcon /> },
-      { id: 'Fleet', icon: <SettingsEthernetIcon /> },
-      { id: 'Settings', icon: <SettingsInputComponentIcon /> },
-    ],
+    children: categoryRoutes,
   },
 ];
 
@@ -101,9 +93,11 @@ function Navigator(props) {
                 {id}
               </ListItemText>
             </ListItem>
-            {children.map(({ id: childId, icon, active }) => (
+            {children.map(({ id: childId, icon, active, path }) => (
               <ListItem
                 key={childId}
+                component={Link}
+                to={path}
                 button
                 className={clsx(classes.item, active && classes.itemActiveItem)}
               >

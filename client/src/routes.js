@@ -1,12 +1,12 @@
-import Home from './pages/Home';
+import Dashboard from './pages/Dashboard';
 
-const routes = [
+import portalRoutes from './pages/Portal/routes';
+
+export default [
+  ...portalRoutes,
   {
-    slug: 'home',
     path: '/',
-    exact: true,
-    component: Home,
-  }
+    component: Dashboard,
+    slug: 'dashboard',
+  },
 ];
-
-export default routes;

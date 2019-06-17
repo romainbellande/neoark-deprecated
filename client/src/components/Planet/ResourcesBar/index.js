@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { shape } from 'prop-types';
 
-import useInterval from '../../../helpers/use-interval';
+import useInterval from '../../../common/helpers/use-interval';
 import styles from './styles';
 
 const ResourcesBar = ({ classes }) => {
