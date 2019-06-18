@@ -25,13 +25,23 @@ const getRemainingTime = (totalMS, percent) => {
   return time;
 };
 
-function ProcessorRow({ id, recipe, level, ratio, resources, items, classes }) {
-  let startPercents = 0;
-
+function ProcessorRow({
+  id,
+  recipe,
+  level,
+  ratio,
+  resources,
+  items,
+  classes,
+  upgradeCosts,
+  startPercents,
+}) {
   if (recipe.id >= 0 && resources[recipe.id] != null) {
     const amount = resources[recipe.id].value;
     startPercents = (amount - Math.floor(amount)) * 100;
   }
+
+  console.log('upgradeCosts', upgradeCosts);
 
   let totalDurationInMS = (1 / recipe.speed) * 3600 * 1000;
   totalDurationInMS -= (startPercents / 100) * totalDurationInMS;
@@ -65,8 +75,11 @@ function ProcessorRow({ id, recipe, level, ratio, resources, items, classes }) {
 
   const getUpgradeTooltipText = () => (
     <div>
-      <div>metal: 10</div>
-      <div>deuterium: 30</div>
+      {upgradeCosts.map(({ id: costId, name, amount }) => (
+        <div key={`cost-item-name-${costId}`}>
+          {name}: {amount}
+        </div>
+      ))}
     </div>
   );
 
@@ -115,6 +128,7 @@ function ProcessorRow({ id, recipe, level, ratio, resources, items, classes }) {
 }
 
 ProcessorRow.propTypes = {
+  upgradeCosts: shape({}).isRequired,
   classes: shape({}).isRequired,
   id: number.isRequired,
   level: number.isRequired,
