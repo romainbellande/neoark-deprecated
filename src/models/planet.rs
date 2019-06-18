@@ -60,7 +60,7 @@ impl Planet {
         }
     }
 
-    pub fn list_by_player(player_id_given: &i32, conn: &diesel::PgConnection) -> Vec<Planet> {
+    pub fn list_by_player(player_id_given: i32, conn: &diesel::PgConnection) -> Vec<Planet> {
         use schema::planets::dsl::*;
 
         planets

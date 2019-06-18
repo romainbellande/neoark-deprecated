@@ -15,7 +15,9 @@ fn get(key: ApiKey, connection: db::Connection) -> Result<Json<Vec<Planet>>, Not
         return Err(NotFound("Player not found".to_string()));
     }
 
-    let planets = Planet::list(&connection);
+    let player = player.unwrap();
+
+    let planets = Planet::list_by_player(player.id, &connection);
 
     Ok(Json(planets))
 }
