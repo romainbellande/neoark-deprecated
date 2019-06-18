@@ -17,10 +17,20 @@ const getRemainingTime = (totalMS, percent) => {
   return time;
 };
 
-function ProcessorRow({ id, recipe, level, ratio, classes }) {
-  const totalDurationInMS = (1 / recipe.speed) * 3600 * 1000;
-  const [completed, setCompleted] = React.useState(0);
+function ProcessorRow({ id, recipe, level, ratio, resources, classes }) {
+  let start_percents = 0;
+
+
+  if (recipe.id >= 0 && resources[recipe.id] != null) {
+    const amount = resources[recipe.id].value;
+    start_percents = (amount - Math.floor(amount)) * 100;
+  }
+
+  let totalDurationInMS = (1 / recipe.speed) * 3600 * 1000;
+  totalDurationInMS -= (start_percents / 100) * totalDurationInMS;
+
   const [remainingTime, setRemainingTime] = useState(totalDurationInMS);
+  const [completed, setCompleted] = React.useState(start_percents);
 
   useInterval(() => {
     setRemainingTime(remainingTime - 1000);
@@ -49,12 +59,12 @@ function ProcessorRow({ id, recipe, level, ratio, classes }) {
   return (
     <>
       <TableRow key={id}>
-        <TableCell component="th" scope="row">
+        <TableCell component="th" scope="row">{level}</TableCell>
+        <TableCell align="right">
           {recipe.name}
         </TableCell>
-        <TableCell align="right">{level}</TableCell>
-        <TableCell align="right">{ratio}</TableCell>
-        <TableCell align="right">{recipe.speed}</TableCell>
+        <TableCell align="right">{(ratio * 100).toFixed(2)}%</TableCell>
+        <TableCell align="right">{recipe.speed}/h</TableCell>
         <TableCell align="right">
           <Fab size="small" color="primary" aria-label="Add" className={classes.margin}>
             <NavigationIcon className={classes.extendedIcon} />

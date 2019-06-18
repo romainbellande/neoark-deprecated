@@ -41,7 +41,7 @@ const Planet = ({ match, fetchPlanet, production, inventory, planet, processors 
     isPlanetLoaded && (
       <div>
         <Resources resources={resources} />
-        <Processors processors={processors} />
+        <Processors processors={processors} resources={resources} />
       </div>
     )
   );

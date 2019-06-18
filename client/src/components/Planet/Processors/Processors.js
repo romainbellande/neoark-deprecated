@@ -9,23 +9,23 @@ import Paper from '@material-ui/core/Paper';
 
 import ProcessorRow from './ProcessorRow';
 
-function Processors({ processors, classes }) {
+function Processors({ processors, resources, classes }) {
   console.log('processors', processors);
   return (
     <Paper className={classes.root}>
       <Table className={classes.table}>
         <TableHead>
           <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell align="right">Level</TableCell>
+            <TableCell>Level</TableCell>
+            <TableCell align="right">Name</TableCell>
             <TableCell align="right">Ratio</TableCell>
-            <TableCell align="right">Recipe speed</TableCell>
+            <TableCell align="right">Max Prod/Hour</TableCell>
             <TableCell align="right">Upgrade</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {processors.map(processor => (
-            <ProcessorRow key={`proc-row-${processor.id}`} {...processor} />
+            <ProcessorRow key={`proc-row-${processor.id}`} {...processor} resources={resources} />
           ))}
         </TableBody>
       </Table>
