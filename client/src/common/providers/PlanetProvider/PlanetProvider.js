@@ -1,10 +1,10 @@
 import React, { createContext, useState } from 'react';
 import { node, func } from 'prop-types';
 
-import withContextFactory from '../../../common/helpers/with-context-factory';
-import buildingConfigurationssMock from '../../../common/mocks/building-configurations';
-import buildingsMock from '../../../common/mocks/buildings';
-import recipes from '../../../common/mocks/recipes.json';
+import withContextFactory from '../../helpers/with-context-factory';
+import buildingConfigurationssMock from '../../mocks/building-configurations';
+import buildingsMock from '../../mocks/buildings';
+import recipes from '../../mocks/recipes.json';
 
 export const PlanetContext = createContext();
 export const withPlanetContext = withContextFactory(PlanetContext);
@@ -17,6 +17,49 @@ const PlanetProvider = ({ children, client }) => {
   const [planet, setPlanet] = useState(null);
   const [processors, setProcessors] = useState([]);
   const [production, setProduction] = useState();
+  const [electricity, setElectricity] = useState(null);
+
+  const formatInventory = (myInventory, myProduction) =>
+    Object.keys(myInventory).map(key => {
+      const id = parseInt(key, 10);
+      const amount = myInventory[id];
+      const netAmount = Math.floor(amount);
+      const currentPercent = Math.abs(amount - netAmount);
+      const currentProduction = myProduction[id];
+      const { actual_rate: actualRate, producing_rate: producingRate } = currentProduction;
+      // console.log('recipes', recipes, id, recipes.find(item => item.id == id));
+      const { name } = recipes.find(item => item.id === id);
+      // console.log('name', recipe)
+
+      return {
+        id,
+        name,
+        netAmount,
+        currentPercent,
+        consumed: Math.floor(parseFloat(actualRate)),
+        produced: Math.floor(parseFloat(producingRate)),
+        consumedRate: parseFloat(actualRate),
+        producedTate: parseFloat(producingRate),
+      };
+    });
+
+  const formatElectricity = (myElectricity, myRecipes) => {
+    const id = 3;
+    const { produced, consumed, ratio } = myElectricity;
+    const recipe = myRecipes.find(item => item.id === id);
+    const { name } = recipe;
+
+    return {
+      id,
+      name,
+      netAmount: null,
+      currentPercent: parseFloat(ratio),
+      consumed: Math.floor(parseFloat(consumed)),
+      produced: Math.floor(parseFloat(produced)),
+      consumedRate: parseFloat(consumed),
+      producedRate: parseFloat(produced),
+    };
+  };
 
   const formatProcessors = (myProcessors, myRecipes) => {
     return myProcessors.map(processor => {
@@ -41,16 +84,20 @@ const PlanetProvider = ({ children, client }) => {
 
   const fetchPlanet = async id => {
     const { data } = await client.get(`/planets/${id}`);
-    setInventory(data.inventory);
+    const formattedElectricity = formatElectricity(data.electricity, recipes);
+    setElectricity(formattedElectricity);
     setPlanet(data.planet);
     const formattedProcessors = formatProcessors(data.processors, recipes);
     setProcessors(formattedProcessors);
     setProduction(data.production);
+    const formattedInventory = formatInventory(data.inventory, data.production);
+    setInventory(formattedInventory);
     return data;
   };
 
   const value = {
     state: {
+      electricity,
       inventory,
       planet,
       processors,

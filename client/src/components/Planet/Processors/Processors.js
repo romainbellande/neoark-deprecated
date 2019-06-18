@@ -10,7 +10,6 @@ import Paper from '@material-ui/core/Paper';
 import ProcessorRow from './ProcessorRow';
 
 function Processors({ processors, resources, classes }) {
-  console.log('processors', processors);
   return (
     <Paper >
       <Table>

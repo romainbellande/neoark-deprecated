@@ -1,5 +1,5 @@
-import { withApiContext } from '../../../../common/providers/ApiProvider';
-import withWrapper from '../../../../common/helpers/with-wrapper';
+import { withApiContext } from '../ApiProvider';
+import withWrapper from '../../helpers/with-wrapper';
 import PlanetsProvider, { withPlanetsContext } from './PlanetsProvider';
 
 export { withPlanetsContext };
