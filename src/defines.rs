@@ -4,7 +4,7 @@ use std::fs::File;
 use std::io::prelude::*;
 
 const RECIPES_PATH: &str = "./client/src/mocks/recipes.json";
-const BUILDINGS_PATH: &str = "./client/src/mocks/building-configurations.json";
+const BUILDINGS_PATH: &str = "./client/src/common/mocks/building-configurations.json";
 
 #[derive(Serialize, Deserialize)]
 pub struct Item {

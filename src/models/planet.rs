@@ -1,4 +1,4 @@
-use bigdecimal::{BigDecimal, ToPrimitive};
+use bigdecimal::{BigDecimal, ToPrimitive, Zero};
 use diesel::prelude::*;
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -85,13 +85,16 @@ impl Planet {
         let mut global_production_context: HashMap<i32, ProductionContext> = HashMap::new();
 
         for processor in processors {
+            if processor.borrow().recipe < 0 || processor.borrow().upgrade_finish.is_some() {
+                continue;
+            }
             let ratio = if use_processor_ratio {
                 processor.borrow().ratio.clone()
             } else {
                 BigDecimal::from(1.0)
             };
 
-            let recipe = &RECIPES[&processor.borrow().recipe];
+            let recipe = &RECIPES.get(&processor.borrow().recipe).unwrap();
 
             let i = &recipe.i;
             let o = &recipe.o;
@@ -124,6 +127,17 @@ impl Planet {
         global_production_context
     }
 
+    pub fn refresh_for(
+        planet_id: i32,
+        conn: &diesel::PgConnection,
+    ) -> (
+        HashMap<i32, i32>,
+        Vec<Processor>,
+        HashMap<i32, ProductionContextRes>,
+    ) {
+        Planet::fetch(planet_id, conn).unwrap().refresh(conn)
+    }
+
     pub fn refresh(
         &self,
         conn: &diesel::PgConnection,
@@ -136,19 +150,28 @@ impl Planet {
 
         let mut processors = vec![];
 
+        let mut time = SystemTime::now();
+        let mut is_building = None;
+
         for processor in _processors {
-            processors.push(Rc::new(RefCell::new(processor)));
+            let shared = Rc::new(RefCell::new(processor.clone()));
+            if let Some(timestamp) = &processor.upgrade_finish {
+                // if finish is in the past
+                if let Err(_) = timestamp.duration_since(time) {
+                    time = *timestamp;
+                    is_building = Some(shared.clone());
+                }
+            }
+            processors.push(shared);
         }
 
         let mut inventory = Inventory::fetch_by_planet(&self.id, conn).unwrap();
 
         let mut total: HashMap<i32, BigDecimal> = serde_json::from_str(&inventory.items).unwrap();
 
-        let elapsed = SystemTime::now()
-            .duration_since(inventory.last_update)
-            .unwrap();
+        let elapsed = time.duration_since(inventory.last_update).unwrap();
 
-        inventory.last_update = SystemTime::now();
+        inventory.last_update = time;
 
         let elapsed = BigDecimal::from(elapsed.as_secs_f64() / 60.0 / 60.0);
 
@@ -169,7 +192,10 @@ impl Planet {
             for processor in &value.attached_processors {
                 let mut guard = processor.borrow_mut();
 
-                if guard.ratio > BigDecimal::from(value.ratio.clone()) {
+                if let Some(_) = guard.upgrade_finish {
+                    guard.ratio = BigDecimal::zero();
+                    guard.save(conn);
+                } else if guard.ratio > BigDecimal::from(value.ratio.clone()) {
                     guard.ratio = BigDecimal::from(value.ratio.clone());
                     guard.save(conn);
                 }
@@ -204,6 +230,20 @@ impl Planet {
 
         for (k, v) in total.iter() {
             total_cell.insert(k.clone(), v.to_i32().unwrap());
+        }
+
+        // must recurse
+        if let Some(building) = is_building {
+            let mut building = building.borrow_mut();
+
+            building.level += 1;
+            building.upgrade_finish = None;
+
+            if !building.save(conn) {
+                return (total_cell, _processors, prod_res);
+            }
+
+            return self.refresh(conn);
         }
 
         (total_cell, _processors, prod_res)

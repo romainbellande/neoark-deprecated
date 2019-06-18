@@ -10,6 +10,7 @@ serde_derive = ""
 serde_json = "1.0"
 diesel = { version = "1.4.0", features = ["postgres", "numeric"] }
 diesel-derive-enum = { version = "0.4.4", features = ["postgres"] }
+# orm_macro_derive = { path = "../diesel-orm" }
 orm_macro_derive = { git = "https://gitlab.com/Champii1/diesel-orm.git" }
 bigdecimal = { version = "0.0.14", features = ["serde"] }
 rocket = "0.4.1"

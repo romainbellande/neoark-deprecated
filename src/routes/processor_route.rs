@@ -3,8 +3,10 @@ use rocket::response::status::NotFound;
 use rocket::{routes, Route};
 use rocket_contrib::json::{Json, JsonValue};
 
+use super::super::defines::RECIPES;
 use super::db;
 use super::models::Player;
+use super::models::Planet;
 use super::models::Processor;
 
 #[get("/")]
@@ -139,6 +141,50 @@ fn new_error(_planet_id: i32) -> Json<JsonValue> {
     ))
 }
 
+#[put("/<processor_id>/set_recipe/<recipe>")]
+fn set_recipe(
+    key: ApiKey,
+    processor_id: i32,
+    recipe: i32,
+    connection: db::Connection,
+) -> Result<Json<Processor>, NotFound<String>> {
+    let player = Player::fetch_by_email(key.0, &connection);
+
+    if player.is_none() {
+        return Err(NotFound("Player not found".to_string()));
+    }
+
+
+    let processor = Processor::fetch(processor_id, &connection);
+
+    if processor.is_none() {
+        return Err(NotFound("Processor not found".to_string()));
+    }
+
+    let mut processor = processor.unwrap();
+
+    let _ = Planet::refresh_for(processor.planet_id, &connection);
+
+    match &RECIPES.get(&recipe) {
+        Some(_) => processor.recipe = recipe,
+        None => return Err(NotFound("No such recipe".to_string())),
+    };
+
+    processor.save(&connection);
+
+    Ok(Json(processor))
+}
+
+#[put("/<_processor_id>/set_recipe/<_recipe>", rank = 2)]
+fn set_recipe_error(_processor_id: i32, _recipe: i32) -> Json<JsonValue> {
+    Json(json!(
+        {
+            "success": false,
+            "message": "Not authorized"
+        }
+    ))
+}
+
 pub fn mount() -> Vec<Route> {
     routes![
         get,
@@ -148,6 +194,8 @@ pub fn mount() -> Vec<Route> {
         upgrade,
         upgrade_error,
         new,
-        new_error
+        new_error,
+        set_recipe,
+        set_recipe_error,
     ]
 }
