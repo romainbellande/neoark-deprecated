@@ -10,6 +10,6 @@ import styles from './styles';
 export default _.flow([
   withStyles(styles),
   withRouter,
-  withApiContext(({ token, isLoginPending }) => ({ token, isLoginPending })),
+  withApiContext(({ token }) => ({ token })),
   withUserContext(({ user }) => ({ user }), ({ login }) => ({ onSubmit: login })),
 ])(Login);
