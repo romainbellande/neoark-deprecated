@@ -97,6 +97,8 @@ fn upgrade(
         return Err(NotFound("Bad processor id".to_string()));
     }
 
+    let _ = Planet::refresh_for(processor.planet_id, &connection);
+
     match processor.schedule_upgrade(&connection) {
         Ok(processor) => Ok(Json(processor)),
         Err(err) => Err(NotFound(err)),
@@ -124,6 +126,8 @@ fn new(
     if player.is_none() {
         return Err(NotFound("Player not found".to_string()));
     }
+
+    let _ = Planet::refresh_for(planet_id, &connection);
 
     match Processor::buy_new(&planet_id, &connection) {
         Ok(processor) => Ok(Json(processor)),
@@ -162,6 +166,10 @@ fn set_recipe(
     }
 
     let mut processor = processor.unwrap();
+
+    if let Some(_) = processor.upgrade_finish {
+        return Err(NotFound("Processor is upgrading".to_string()));
+    }
 
     let _ = Planet::refresh_for(processor.planet_id, &connection);
 

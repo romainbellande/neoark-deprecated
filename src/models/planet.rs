@@ -31,16 +31,16 @@ impl ProductionContext {
 #[derive(Default, Debug, Clone, Serialize, Deserialize)]
 pub struct ProductionContextRes {
     pub id: i32,
-    pub rate: BigDecimal,
-    pub net_rate: BigDecimal,
+    pub actual_rate: BigDecimal,
+    pub producing_rate: BigDecimal,
 }
 
 impl ProductionContextRes {
     pub fn from_details(pc: ProductionContext) -> ProductionContextRes {
         ProductionContextRes {
             id: pc.id,
-            rate: pc.rate.clone(),
-            net_rate: pc.rate.clone(),
+            actual_rate: pc.rate.clone(),
+            producing_rate: pc.rate.clone(),
         }
     }
 }
@@ -167,6 +167,8 @@ impl Planet {
                     time = *finish_time;
                     is_building = Some(shared.clone());
                 }
+            } else {
+                shared.borrow_mut().ratio = BigDecimal::from(1.0);
             }
             processors.push(shared);
         }
@@ -201,8 +203,8 @@ impl Planet {
                 if let Some(_) = guard.upgrade_finish {
                     guard.ratio = BigDecimal::zero();
                     guard.save(conn);
-                } else if guard.ratio > BigDecimal::from(value.ratio.clone()) {
-                    guard.ratio = BigDecimal::from(value.ratio.clone());
+                } else if guard.ratio.clone() > value.ratio.clone() {
+                    guard.ratio = value.ratio.clone();
                     guard.save(conn);
                 }
             }
@@ -218,7 +220,7 @@ impl Planet {
         for (key, value) in global_production_context2.iter_mut() {
             value.rate = (value.produced.clone() - value.consumed.clone()) / elapsed.clone();
 
-            prod_res.get_mut(&key).unwrap().net_rate = value.rate.clone();
+            prod_res.get_mut(&key).unwrap().actual_rate = value.rate.clone();
 
             *total.entry(*key).or_default() += value.produced.clone() - value.consumed.clone()
         }

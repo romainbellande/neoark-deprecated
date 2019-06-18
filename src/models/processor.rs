@@ -1,4 +1,4 @@
-use bigdecimal::{BigDecimal, Zero, ToPrimitive};
+use bigdecimal::{BigDecimal, ToPrimitive};
 use diesel::prelude::*;
 use std::ops::Add;
 use std::time::{Duration, SystemTime};
@@ -25,7 +25,7 @@ impl Processor {
             planet_id,
             level: 0,
             upgrade_finish: None,
-            ratio: BigDecimal::zero(),
+            ratio: BigDecimal::from(1.0),
             recipe: -1,
         }
     }
