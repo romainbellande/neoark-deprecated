@@ -7,19 +7,38 @@ import withContextFactory from '../../helpers/with-context-factory';
 export const ApiContext = createContext();
 export const withApiContext = withContextFactory(ApiContext);
 
+const createClient = (options = {}) => axios.create({ baseURL: '/api/v1', ...options });
+
 const ApiProvider = ({ children }) => {
-  const client = axios.create({ baseURL: '/api/v1' });
-  const [token, setToken] = useState(null);
+  const defaultClient = createClient();
+  const [clientWrapper, setClientWrapper] = useState({ client: defaultClient });
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const { client } = clientWrapper;
+  const setClient = value => setClientWrapper({ client: value });
+
+  const sessionToken = window.sessionStorage.getItem('token');
+  const [token, setToken] = useState(sessionToken);
 
   useEffect(() => {
-    return () => {
-      client.defaults.headers.common.authentication = token;
-    };
-  }, [token, client.defaults.headers.common.authentication]);
+    if (token != null) {
+      const authClient = createClient({
+        headers: { authentication: token },
+      });
+      setClient(authClient);
+      setIsLoggedIn(true);
+    } else if (sessionToken) {
+      setToken(sessionToken);
+    } else {
+      setClient(defaultClient);
+    }
+  }, [token]);
 
   const value = {
     state: {
       client,
+      token,
+      isLoggedIn,
     },
     dispatch: {
       setToken,

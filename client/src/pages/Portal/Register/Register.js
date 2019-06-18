@@ -71,7 +71,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function Register(props) {
-  console.log('props', props);
   const { onSubmit, user } = props;
   const classes = useStyles();
 
