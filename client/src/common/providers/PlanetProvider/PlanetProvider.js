@@ -65,12 +65,19 @@ const PlanetProvider = ({ children, client }) => {
     return myProcessors.map(processor => {
       const { id, level, ratio, recipe: recipeId, upgrade_finish: upgradeFinish } = processor;
       const recipeItem = myRecipes.find(item => item.id === recipeId);
+      const buildingConfiguration = buildingConfigurationssMock[0];
+      const upgradeCosts = buildingConfiguration.costs.map(({ id: costRecipeId, amount }) => ({
+        id: costRecipeId,
+        amount,
+        name: myRecipes.find(item => item.id === costRecipeId).name,
+      }));
 
       return {
         id,
         level,
         ratio: parseFloat(ratio),
         upgradeFinish,
+        upgradeCosts,
         recipe: {
           id: recipeItem.id,
           name: recipeItem.name,
