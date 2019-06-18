@@ -22,10 +22,17 @@ pub struct ProductionContext {
 
 impl ProductionContext {
     pub fn new(id: i32) -> ProductionContext {
-        ProductionContext {
+        let mut pc = ProductionContext {
             id,
             ..Default::default()
-        }
+        };
+
+        pc.produced = pc.produced.with_prec(6);
+        pc.consumed = pc.consumed.with_prec(6);
+        pc.ratio = pc.ratio.with_prec(6);
+        pc.rate = pc.rate.with_prec(6);
+
+        pc
     }
 }
 
@@ -40,8 +47,8 @@ impl ProductionContextRes {
     pub fn from_details(pc: ProductionContext) -> ProductionContextRes {
         ProductionContextRes {
             id: pc.id,
-            actual_rate: pc.rate.clone(),
-            producing_rate: pc.rate.clone(),
+            actual_rate: pc.rate.clone().with_prec(6),
+            producing_rate: pc.rate.clone().with_prec(6),
         }
     }
 }
@@ -145,8 +152,8 @@ impl Planet {
     pub fn calc_electric_ratio(
         processors: &Vec<Processor>,
     ) -> ((BigDecimal, BigDecimal), BigDecimal) {
-        let mut total_conso = BigDecimal::from(0);
-        let mut total_prod = BigDecimal::from(0);
+        let mut total_conso = BigDecimal::from(0).with_prec(6);
+        let mut total_prod = BigDecimal::from(0).with_prec(6);
 
         for processor in processors {
             if processor.recipe < 0 {
@@ -251,7 +258,7 @@ impl Planet {
                 value.ratio = value.produced.clone() / value.consumed.clone();
             }
 
-            // value.ratio *= elec_ratio.clone();
+            value.ratio = value.ratio.with_prec(6);
 
             value.rate = (value.produced.clone() - value.consumed.clone()) / elapsed.clone();
 
@@ -287,7 +294,9 @@ impl Planet {
 
             prod_res.get_mut(&key).unwrap().actual_rate = value.rate.clone();
 
-            *total.entry(*key).or_default() +=
+            *total
+                .entry(*key)
+                .or_insert(BigDecimal::default().with_prec(6)) +=
                 value.produced.with_prec(6).clone() - value.consumed.with_prec(6).clone()
         }
 
@@ -300,10 +309,10 @@ impl Planet {
 
         inventory.save(conn);
 
-        let mut total_cell = HashMap::new();
+        let mut inventory_total = HashMap::new();
 
         for (k, v) in total.iter() {
-            total_cell.insert(k.clone(), v.with_prec(6));
+            inventory_total.insert(k.clone(), v.with_prec(6));
         }
 
         // must recurse
@@ -311,16 +320,15 @@ impl Planet {
             let mut building = building.borrow_mut();
 
             building.level += 1;
-            building.upgrade_finished = Some(time);
             building.upgrade_finish = None;
 
             if !building.save(conn) {
-                return (total_cell, _processors, prod_res, elec_summary);
+                return (inventory_total, _processors, prod_res, elec_summary);
             }
 
             return self.refresh(conn);
         }
 
-        (total_cell, _processors, prod_res, elec_summary)
+        (inventory_total, _processors, prod_res, elec_summary)
     }
 }

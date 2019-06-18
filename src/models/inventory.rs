@@ -90,7 +90,7 @@ impl Inventory {
         }
 
         for (k, v) in costs.iter() {
-            *items.entry(*k).or_default() -= v;
+            *items.entry(*k).or_insert(BigDecimal::from(0).with_prec(6)) -= v;
         }
 
         self.items = serde_json::to_string(&items).unwrap();
