@@ -172,11 +172,11 @@ fn set_recipe(
 
     let mut processor = processor.unwrap();
 
+    let _ = Planet::refresh_for(processor.planet_id, &connection);
+
     if let Some(_) = processor.upgrade_finish {
         return Err(NotFound("Processor is upgrading".to_string()));
     }
-
-    let _ = Planet::refresh_for(processor.planet_id, &connection);
 
     match &RECIPES.get(&recipe) {
         Some(_) => processor.recipe = recipe,

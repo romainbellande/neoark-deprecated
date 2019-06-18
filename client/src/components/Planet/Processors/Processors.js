@@ -9,7 +9,7 @@ import Paper from '@material-ui/core/Paper';
 
 import ProcessorRow from './ProcessorRow';
 
-function Processors({ processors, resources, classes }) {
+function Processors({ processors, resources, items, classes }) {
   return (
     <Paper >
       <Table>
@@ -24,7 +24,7 @@ function Processors({ processors, resources, classes }) {
         </TableHead>
         <TableBody>
           {processors.map(processor => (
-            <ProcessorRow key={`proc-row-${processor.id}`} {...processor} resources={resources} />
+            <ProcessorRow key={`proc-row-${processor.id}`} {...processor} resources={resources} items={items} />
           ))}
         </TableBody>
       </Table>

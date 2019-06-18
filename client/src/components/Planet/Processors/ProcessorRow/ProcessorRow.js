@@ -25,7 +25,7 @@ const getRemainingTime = (totalMS, percent) => {
   return time;
 };
 
-function ProcessorRow({ id, recipe, level, ratio, resources, classes }) {
+function ProcessorRow({ id, recipe, level, ratio, resources, items, classes }) {
   let startPercents = 0;
 
   if (recipe.id >= 0 && resources[recipe.id] != null) {
@@ -70,13 +70,34 @@ function ProcessorRow({ id, recipe, level, ratio, resources, classes }) {
     </div>
   );
 
+  const getRecipeTooltipText = (recipe) => (
+    <div style={{ display: 'flex' }}>
+      <span>
+        {recipe.input.map(item => (
+          <div>{items[item.id].name}: {item.amount}</div>
+        ))}
+      </span>
+      <span>
+        {recipe.output.map(item => (
+          <div>{items[item.id].name}: {item.amount}</div>
+        ))}
+      </span>
+    </div>
+  );
+
   return (
     <>
       <TableRow key={id}>
         <TableCell component="th" scope="row">
           {level}
         </TableCell>
-        <TableCell align="right">{recipe.name}</TableCell>
+        <TableCell align="right">
+          <HtmlTooltip title={getRecipeTooltipText(recipe)}>
+            <span>
+              {recipe.name}
+            </span>
+          </HtmlTooltip>
+        </TableCell>
         <TableCell align="right">
           {(recipe.speed * ratio).toFixed(2)}/h ({recipe.speed})
         </TableCell>
