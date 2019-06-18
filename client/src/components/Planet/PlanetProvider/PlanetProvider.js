@@ -4,6 +4,7 @@ import { node, func } from 'prop-types';
 import withContextFactory from '../../../common/helpers/with-context-factory';
 import buildingConfigurationssMock from '../../../common/mocks/building-configurations';
 import buildingsMock from '../../../common/mocks/buildings';
+import recipes from '../../../common/mocks/recipes.json';
 
 export const PlanetContext = createContext();
 export const withPlanetContext = withContextFactory(PlanetContext);
@@ -17,11 +18,33 @@ const PlanetProvider = ({ children, client }) => {
   const [processors, setProcessors] = useState([]);
   const [production, setProduction] = useState();
 
+  const formatProcessors = (myProcessors, myRecipes) => {
+    return myProcessors.map(processor => {
+      const { id, level, ratio, recipe: recipeId, upgrade_finish: upgradeFinish } = processor;
+      const recipeItem = myRecipes.find(item => item.id === recipeId);
+
+      return {
+        id,
+        level,
+        ratio: parseFloat(ratio),
+        upgradeFinish,
+        recipe: {
+          id: recipeItem.id,
+          name: recipeItem.name,
+          speed: recipeItem.speed,
+          input: recipeItem.i,
+          output: recipeItem.o,
+        },
+      };
+    });
+  };
+
   const fetchPlanet = async id => {
     const { data } = await client.get(`/planets/${id}`);
     setInventory(data.inventory);
     setPlanet(data.planet);
-    setProcessors(data.processors);
+    const formattedProcessors = formatProcessors(data.processors, recipes);
+    setProcessors(formattedProcessors);
     setProduction(data.production);
     return data;
   };

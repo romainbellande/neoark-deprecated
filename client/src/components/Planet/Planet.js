@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { shape, func } from 'prop-types';
+import { shape, func, arrayOf } from 'prop-types';
 
 import Resources from './Resources';
 import items from '../../common/mocks/items';
+import Processors from './Processors';
 
-const Planet = ({ match, fetchPlanet, production, inventory, planet }) => {
+const Planet = ({ match, fetchPlanet, production, inventory, planet, processors }) => {
   const [isPlanetLoaded, setIsPlanetLoaded] = useState(false);
   const [resources, setResources] = useState([]);
 
@@ -16,15 +17,15 @@ const Planet = ({ match, fetchPlanet, production, inventory, planet }) => {
         const resourceItem = items.find(item => item.id === parseInt(key, 10));
         const resourceProduction = production[key];
         const { id, name } = resourceItem;
-        const { rate, net_rate: netRate } = resourceProduction;
+        const { actual_rate: netRate, producing_rate: producingRate } = resourceProduction;
         const value = inventory[key];
 
         return {
           id,
           name,
           value,
-          rate: parseFloat(rate),
-          netRate: parseFloat(netRate),
+          rate: parseFloat(netRate),
+          netRate: parseFloat(producingRate),
         };
       });
 
@@ -40,6 +41,7 @@ const Planet = ({ match, fetchPlanet, production, inventory, planet }) => {
     isPlanetLoaded && (
       <div>
         <Resources resources={resources} />
+        <Processors processors={processors} />
       </div>
     )
   );
@@ -47,6 +49,7 @@ const Planet = ({ match, fetchPlanet, production, inventory, planet }) => {
 
 Planet.propTypes = {
   production: shape({}),
+  processors: arrayOf(shape({})),
   planet: shape({}),
   inventory: shape({}),
   match: shape({
@@ -56,6 +59,7 @@ Planet.propTypes = {
 };
 
 Planet.defaultProps = {
+  processors: [],
   production: null,
   planet: null,
   inventory: null,
