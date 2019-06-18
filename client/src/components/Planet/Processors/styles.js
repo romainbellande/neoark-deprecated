@@ -5,6 +5,7 @@ export default theme => ({
     overflowX: 'auto',
   },
   table: {
+    color: '#FFFFFF',
     minWidth: 650,
   },
 });

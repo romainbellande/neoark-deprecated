@@ -3,9 +3,9 @@ export default () => ({
     width: '100%',
   },
   listItem: {
-    backgroundColor: '#18202c',
+    backgroundColor: '#282828',
     '&:hover': {
-      backgroundColor: '#232f3e',
+      backgroundColor: '#383838',
     },
   },
 });

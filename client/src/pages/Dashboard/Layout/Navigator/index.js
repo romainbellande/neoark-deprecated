@@ -47,7 +47,7 @@ const styles = theme => ({
     color: theme.palette.common.white,
   },
   itemActiveItem: {
-    color: '#4fc3f7',
+    color: '#c70d0d',
   },
   itemPrimary: {
     fontSize: 'inherit',
@@ -67,10 +67,10 @@ function Navigator(props) {
   return (
     <Drawer variant="permanent" {...other}>
       <List disablePadding>
-        <ListItem className={clsx(classes.firebase, classes.item, classes.itemCategory)}>
-          Paperbase
+        <ListItem className={clsx(classes.firebase, classes.item, classes.itemCategory)} style={{ backgroundColor: '#222222' }}>
+          NeoArk
         </ListItem>
-        <ListItem className={clsx(classes.item, classes.itemCategory)}>
+        {/* <ListItem className={clsx(classes.item, classes.itemCategory)}>
           <ListItemIcon className={classes.itemIcon}>
             <HomeIcon />
           </ListItemIcon>
@@ -81,7 +81,7 @@ function Navigator(props) {
           >
             Project Overview
           </ListItemText>
-        </ListItem>
+        </ListItem> */}
         {categories.map(({ id, children }) => (
           <React.Fragment key={id}>
             <ListItem className={classes.categoryHeader}>

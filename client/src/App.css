@@ -31,3 +31,27 @@
     transform: rotate(360deg);
   }
 }
+
+table {
+  background-color: #292929;
+  border: 1px solid rgb(184, 62, 62) !important;
+}
+.MuiTableCell-head {
+  color: rgb(190, 190, 190) !important;
+  max-height: 20px !important;
+  font-size: 30px;
+}
+
+.MuiTableHead-root {
+  color: rgb(190, 190, 190) !important;
+  max-height: 20px !important;
+}
+
+.MuiTableCell-body {
+  color: rgb(190, 190, 190) !important;
+}
+
+.MuiTableCell-root {
+  border-top: 1px solid rgb(184, 62, 62) !important;
+  border-bottom: 1px solid rgb(184, 62, 62) !important;
+}

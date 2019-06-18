@@ -12,14 +12,14 @@ import ProcessorRow from './ProcessorRow';
 function Processors({ processors, resources, classes }) {
   console.log('processors', processors);
   return (
-    <Paper className={classes.root}>
-      <Table className={classes.table}>
+    <Paper >
+      <Table>
         <TableHead>
           <TableRow>
             <TableCell>Level</TableCell>
             <TableCell align="right">Name</TableCell>
+            <TableCell align="right">Actual Prod/Hour (Max)</TableCell>
             <TableCell align="right">Ratio</TableCell>
-            <TableCell align="right">Max Prod/Hour</TableCell>
             <TableCell align="right">Upgrade</TableCell>
           </TableRow>
         </TableHead>

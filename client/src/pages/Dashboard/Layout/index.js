@@ -19,8 +19,8 @@ let theme = createMuiTheme({
   },
   palette: {
     primary: {
-      light: '#63ccff',
-      main: '#009be5',
+      light: '#006db3',
+      main: '#006db3',
       dark: '#006db3',
     },
   },
@@ -32,9 +32,14 @@ let theme = createMuiTheme({
 theme = {
   ...theme,
   overrides: {
+    // MuiPaper: {
+    //   root: {
+    //     backgroundColor: '#212121',
+    //   },
+    // },
     MuiDrawer: {
       paper: {
-        backgroundColor: '#18202c',
+        backgroundColor: '#1f1f1f',
       },
     },
     MuiButton: {
@@ -83,7 +88,7 @@ theme = {
     },
     MuiDivider: {
       root: {
-        backgroundColor: '#404854',
+        backgroundColor: '#28171a',
       },
     },
     MuiListItemText: {
@@ -141,7 +146,7 @@ const styles = {
   mainContent: {
     flex: 1,
     padding: '48px 36px 0',
-    background: '#3699bf',
+    background: '#212121',
     color: 'white',
   },
 };

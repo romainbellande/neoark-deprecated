@@ -22,10 +22,10 @@ const lightColor = 'rgba(255, 255, 255, 0.7)';
 
 const styles = theme => ({
   appBar: {
-    backgroundColor: '#18202c',
+    backgroundColor: '#282828',
   },
   secondaryBar: {
-    backgroundColor: '#18202c',
+    backgroundColor: '#282828',
     zIndex: 0,
   },
   menuButton: {

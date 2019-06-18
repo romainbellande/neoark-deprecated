@@ -63,8 +63,8 @@ function ProcessorRow({ id, recipe, level, ratio, resources, classes }) {
         <TableCell align="right">
           {recipe.name}
         </TableCell>
+        <TableCell align="right">{(recipe.speed * ratio).toFixed(2)}/h ({recipe.speed})</TableCell>
         <TableCell align="right">{(ratio * 100).toFixed(2)}%</TableCell>
-        <TableCell align="right">{recipe.speed}/h</TableCell>
         <TableCell align="right">
           <Fab size="small" color="primary" aria-label="Add" className={classes.margin}>
             <NavigationIcon className={classes.extendedIcon} />
