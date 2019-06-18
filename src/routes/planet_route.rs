@@ -1,3 +1,4 @@
+use bigdecimal::{BigDecimal};
 use super::auth::ApiKey;
 use rocket::response::status::NotFound;
 use rocket::{routes, Route};
@@ -58,7 +59,9 @@ fn get_one(
         return Err(NotFound("Bad planet id".to_string()));
     }
 
-    let (inventory, processors, prod) = planet.refresh(&connection);
+    let (inventory, processors, prod, elec_summary) = planet.refresh(&connection);
+
+    let ((elec_prod, elec_conso), elec_ratio) = elec_summary.clone();
 
     Ok(Json(json!(
         {
@@ -66,6 +69,11 @@ fn get_one(
             "inventory": inventory,
             "processors": processors,
             "production": prod,
+            "electricity": {
+                "produced": elec_prod,
+                "consumed": elec_conso,
+                "ratio": elec_ratio,
+            }
         }
     )))
 }

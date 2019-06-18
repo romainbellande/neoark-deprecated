@@ -17,6 +17,7 @@ pub struct Recipe {
     pub id: i32,
     pub name: String,
     pub speed: i32,
+    pub conso: i32,
     pub i: Vec<Item>,
     pub o: Vec<Item>,
 }

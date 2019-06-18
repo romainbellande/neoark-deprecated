@@ -3,6 +3,7 @@
     "id": 0,
     "name": "Metal processing",
     "speed": 30,
+    "conso": 10,
     "i": [],
     "o": [
       {
@@ -15,6 +16,7 @@
     "id": 1,
     "name": "Crystal processing",
     "speed": 20,
+    "conso": 10,
     "i": [],
     "o": [
       {
@@ -27,6 +29,7 @@
     "id": 2,
     "name": "Deutherium processing",
     "speed": 10,
+    "conso": 10,
     "i": [],
     "o": [
       {
@@ -37,8 +40,17 @@
   },
   {
     "id": 3,
+    "name": "Electricity Generator",
+    "speed": 30,
+    "conso": 0,
+    "i": [],
+    "o": []
+  },
+  {
+    "id": 4,
     "name": "Science pack",
     "speed": 1,
+    "conso": 100,
     "i": [
       {
         "id": 0,

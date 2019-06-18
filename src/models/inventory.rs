@@ -73,7 +73,7 @@ impl Inventory {
                 Some(own) => own,
                 None => return false,
             };
-            println!("ITEMS {:#?} {:#?}", own, v);
+
             if own < v {
                 return false;
             }
