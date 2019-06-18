@@ -55,3 +55,7 @@ table {
   border-top: 1px solid rgb(184, 62, 62) !important;
   border-bottom: 1px solid rgb(184, 62, 62) !important;
 }
+
+.MuiFab-primary {
+   background-color: #393939 !important;
+}

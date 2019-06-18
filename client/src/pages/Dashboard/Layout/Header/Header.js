@@ -72,9 +72,12 @@ const Header = props => {
               </Grid>
             </Hidden>
             <Grid item xs>
-              <ResourcesBar />
+              <Typography color="inherit" variant="h5" component="h1">
+                {planetName}
+              </Typography>
             </Grid>
-            <Grid item>
+
+            {/* <Grid item>
               <Typography className={classes.link} component="a" href="#">
                 Go to docs
               </Typography>
@@ -85,8 +88,8 @@ const Header = props => {
                   <NotificationsIcon />
                 </IconButton>
               </Tooltip>
-            </Grid>
-            <Grid item>
+            </Grid> */}
+            {/* <Grid item>
               <IconButton color="inherit" className={classes.iconButtonAvatar}>
                 <Avatar
                   className={classes.avatar}
@@ -94,19 +97,18 @@ const Header = props => {
                   alt="My Avatar"
                 />
               </IconButton>
-            </Grid>
+            </Grid> */}
           </Grid>
         </Toolbar>
       </AppBar>
       <AppBar component="div" className={classes.secondaryBar} position="static" elevation={0}>
-        <Toolbar>
-          <Grid container alignItems="center" spacing={1}>
-            <Grid item xs>
-              <Typography color="inherit" variant="h5" component="h1">
-                {planetName}
-              </Typography>
-            </Grid>
-            <Grid item>
+        {/* <Toolbar> */}
+        {/* <Grid container alignItems="center" spacing={1}> */}
+        {/* <Grid item xs>
+              <ResourcesBar />
+            </Grid> */}
+
+        {/* <Grid item>
               <Button className={classes.button} variant="outlined" color="inherit" size="small">
                 Web setup
               </Button>
@@ -117,11 +119,11 @@ const Header = props => {
                   <HelpIcon />
                 </IconButton>
               </Tooltip>
-            </Grid>
-          </Grid>
-        </Toolbar>
+            </Grid> */}
+        {/* </Grid> */}
+        {/* </Toolbar> */}
       </AppBar>
-      <AppBar
+      {/* <AppBar
         component="div"
         className={classes.secondaryBar}
         color="primary"
@@ -134,7 +136,7 @@ const Header = props => {
           <Tab textColor="inherit" label="Templates" />
           <Tab textColor="inherit" label="Usage" />
         </Tabs>
-      </AppBar>
+      </AppBar> */}
     </React.Fragment>
   );
 };

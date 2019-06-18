@@ -9,15 +9,17 @@ use super::models::Player;
 use super::models::Planet;
 use super::models::Processor;
 
-#[get("/")]
-fn get(key: ApiKey, connection: db::Connection) -> Result<Json<Vec<Processor>>, NotFound<String>> {
+#[get("/by_planet/<planet_id>")]
+fn get(key: ApiKey, planet_id: i32, connection: db::Connection) -> Result<Json<Vec<Processor>>, NotFound<String>> {
     let player = Player::fetch_by_email(key.0, &connection);
 
     if player.is_none() {
         return Err(NotFound("Player not found".to_string()));
     }
 
-    let processors = Processor::list(&connection);
+    let _ = Planet::refresh_for(planet_id.clone(), &connection);
+
+    let processors = Processor::list_by_planet(&planet_id, &connection);
 
     Ok(Json(processors))
 }
@@ -46,6 +48,7 @@ fn get_one(
 
     let player = player.unwrap();
 
+
     let processor = Processor::fetch(id, &connection);
 
     if processor.is_none() {
@@ -53,6 +56,8 @@ fn get_one(
     }
 
     let processor = processor.unwrap();
+
+    let _ = Planet::refresh_for(processor.planet_id, &connection);
 
     if processor.player_id != player.id {
         return Err(NotFound("Bad processor id".to_string()));

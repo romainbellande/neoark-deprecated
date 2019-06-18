@@ -68,14 +68,6 @@ function ProcessorRow({ id, recipe, level, ratio, resources, classes }) {
           </Fab>
         </TableCell>
       </TableRow>
-      <TableRow>
-        <TableCell colSpan={4}>
-          <LinearProgress variant="determinate" value={completed} />
-        </TableCell>
-        <TableCell colSpan={1}>
-          {remainingTimeFormatted} ({completed.toFixed(2)}%)
-        </TableCell>
-      </TableRow>
     </>
   );
 }

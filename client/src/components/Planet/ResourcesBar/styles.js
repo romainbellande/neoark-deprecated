@@ -1,8 +1,8 @@
 export default () => ({
   root: {
     display: 'flex',
-    background: '#383838',
-    padding: '10px 10px',
+    // background: '#383838',
+    padding: '23px 23px',
   },
   item: {
     display: 'flex',
