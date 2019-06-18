@@ -45,7 +45,7 @@ fn login(player: Json<Credentials>, connection: db::Connection) -> Result<Json<J
 
 #[get("/me")]
 fn me(key: ApiKey, connection: db::Connection) -> Result<Json<JsonValue>, NotFound<String>> {
-    let player = Player::fetch_by_username(key.0, &connection);
+    let player = Player::fetch_by_email(key.0, &connection);
 
     match player {
         None => Err(NotFound("Player not found".to_string())),

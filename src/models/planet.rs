@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use std::rc::Rc;
 use std::time::SystemTime;
 
-use super::super::recipes::RECIPES;
+use super::super::defines::RECIPES;
 use super::schema;
 use super::schema::planets;
 use super::{Inventory, Processor};
@@ -74,7 +74,7 @@ impl Planet {
 
         planet.save(conn);
 
-        Inventory::new(planet.id).save(conn);
+        Inventory::new(user_id, planet.id).save(conn);
     }
 
     fn get_production_context(

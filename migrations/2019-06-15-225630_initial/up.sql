@@ -19,12 +19,13 @@ INSERT INTO planets (player_id, name) VALUES (1, 'toto');
 
 CREATE TABLE inventories (
     id SERIAL PRIMARY KEY,
+    player_id INTEGER REFERENCES players(id) NOT NULL,
     planet_id INTEGER REFERENCES planets(id) NOT NULL,
     items VARCHAR NOT NULL,
     last_update TIMESTAMP NOT NULL
 );
 
-INSERT INTO inventories (planet_id, items, last_update) VALUES (1, '{}', NOW());
+INSERT INTO inventories (player_id, planet_id, items, last_update) VALUES (1, 1, '{"0":1000,"1":1000}', NOW());
 
 CREATE TABLE processors (
     id SERIAL PRIMARY KEY,

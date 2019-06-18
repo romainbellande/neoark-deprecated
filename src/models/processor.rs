@@ -1,7 +1,9 @@
 use bigdecimal::{BigDecimal, Zero};
 use diesel::prelude::*;
-use std::time::SystemTime;
+use std::ops::Add;
+use std::time::{Duration, SystemTime};
 
+use super::inventory::*;
 use super::schema;
 use super::schema::processors;
 
@@ -36,5 +38,39 @@ impl Processor {
             .filter(planet_id.eq(planet_id_given))
             .load::<Processor>(conn)
             .unwrap()
+    }
+
+    pub fn schedule_upgrade(&mut self, conn: &diesel::PgConnection) -> Result<Processor, String> {
+        let mut inventory = Inventory::fetch_by_planet(&self.planet_id, conn).unwrap();
+
+        let has_bought = inventory.buy(&Inventory::cost_of(&0, self.level + 1), conn);
+
+        if !has_bought {
+            return Err("Not enough".to_string());
+        }
+
+        self.upgrade_finish = Some(SystemTime::now().add(Duration::from_secs(1000)));
+
+        self.save(conn);
+
+        Ok(self.clone())
+    }
+
+    pub fn buy_new(planet_id: &i32, conn: &diesel::PgConnection) -> Result<Processor, String> {
+        let mut inventory = Inventory::fetch_by_planet(planet_id, conn).unwrap();
+
+        let has_bought = inventory.buy(&Inventory::cost_of(&0, 1), conn);
+
+        if !has_bought {
+            return Err("Not enough".to_string());
+        }
+
+        let mut processor = Processor::new(inventory.player_id, *planet_id);
+
+        processor.upgrade_finish = Some(SystemTime::now().add(Duration::from_secs(1000)));
+
+        processor.save(conn);
+
+        Ok(processor)
     }
 }

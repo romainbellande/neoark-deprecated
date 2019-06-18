@@ -18,7 +18,7 @@ mod models;
 mod routes;
 mod schema;
 mod server;
-mod recipes;
+mod defines;
 
 use server::Server;
 
