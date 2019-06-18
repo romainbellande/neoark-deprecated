@@ -1,8 +1,7 @@
 import _ from 'lodash';
 import { withRouter } from 'react-router-dom';
 
-import withWrapper from '../../common/helpers/with-wrapper';
-import PlanetProvider, { withPlanetContext } from './PlanetProvider';
+import { withPlanetContext } from '../../common/providers/PlanetProvider';
 import Planet from './Planet';
 
 export default _.flow([
@@ -18,5 +17,4 @@ export default _.flow([
       fetchPlanet,
     })
   ),
-  withWrapper(PlanetProvider)(),
 ])(Planet);

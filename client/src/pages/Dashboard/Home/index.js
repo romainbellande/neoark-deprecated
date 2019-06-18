@@ -1,11 +1,9 @@
 import React from 'react';
 
+import Planet from '../../../components/Planet';
+
 const Home = () => {
-  return (
-    <div>
-      <header>You are home</header>
-    </div>
-  );
+  return <Planet />;
 };
 
 export default Home;

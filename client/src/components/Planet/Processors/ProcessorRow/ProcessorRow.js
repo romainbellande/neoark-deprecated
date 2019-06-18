@@ -11,26 +11,23 @@ import useInterval from '../../../../common/helpers/use-interval';
 
 const getRemainingTime = (totalMS, percent) => {
   const time = totalMS - percent / totalMS;
-  console.log('totalMS', totalMS);
-  console.log('percent', percent);
-  console.log('time', time);
   return time;
 };
 
 function ProcessorRow({ id, recipe, level, ratio, resources, classes }) {
-  let start_percents = 0;
+  let startPercents = 0;
 
 
   if (recipe.id >= 0 && resources[recipe.id] != null) {
     const amount = resources[recipe.id].value;
-    start_percents = (amount - Math.floor(amount)) * 100;
+    startPercents = (amount - Math.floor(amount)) * 100;
   }
 
   let totalDurationInMS = (1 / recipe.speed) * 3600 * 1000;
-  totalDurationInMS -= (start_percents / 100) * totalDurationInMS;
+  totalDurationInMS -= (startPercents / 100) * totalDurationInMS;
 
   const [remainingTime, setRemainingTime] = useState(totalDurationInMS);
-  const [completed, setCompleted] = React.useState(start_percents);
+  const [completed, setCompleted] = React.useState(startPercents);
 
   useInterval(() => {
     setRemainingTime(remainingTime - 1000);

@@ -4,10 +4,13 @@ import { createMuiTheme, withStyles } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Hidden from '@material-ui/core/Hidden';
+import Divider from '@material-ui/core/Divider';
+import classNames from 'classnames';
 
 import Navigator from './Navigator';
 import Content from './Content';
 import Header from './Header';
+import ResourcesNav from './ResourcesNav';
 
 let theme = createMuiTheme({
   typography: {
@@ -22,6 +25,8 @@ let theme = createMuiTheme({
       light: '#006db3',
       main: '#006db3',
       dark: '#006db3',
+      blueDark: '#18202c',
+      lightGrey: 'rgba(255, 255, 255, 0.7)',
     },
   },
   shape: {
@@ -32,11 +37,6 @@ let theme = createMuiTheme({
 theme = {
   ...theme,
   overrides: {
-    // MuiPaper: {
-    //   root: {
-    //     backgroundColor: '#212121',
-    //   },
-    // },
     MuiDrawer: {
       paper: {
         backgroundColor: '#1f1f1f',
@@ -149,6 +149,16 @@ const styles = {
     background: '#212121',
     color: 'white',
   },
+  wrapper: {
+    flex: 1,
+    display: 'flex',
+    flexFlow: 'row',
+  },
+  infoNav: {
+    background: '#1f1f1f',
+    color: theme.palette.primary.lightGrey,
+    height: '100%',
+  },
 };
 
 class Paperbase extends React.Component {
@@ -183,9 +193,17 @@ class Paperbase extends React.Component {
           </nav>
           <div className={classes.appContent}>
             <Header onDrawerToggle={this.handleDrawerToggle} />
-            <main className={classes.mainContent}>
-              <Content />
-            </main>
+            <div className={classes.wrapper}>
+              <main className={classes.mainContent}>
+                <Content />
+              </main>
+              <div>
+                <Divider className={classes.divider} />
+                <nav className={classNames(classes.infoNav, classes.drawer)}>
+                  <ResourcesNav />
+                </nav>
+              </div>
+            </div>
           </div>
         </div>
       </ThemeProvider>

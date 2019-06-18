@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { func, node, string } from 'prop-types';
 
-import withContextFactory from '../../../../common/helpers/with-context-factory';
+import withContextFactory from '../../helpers/with-context-factory';
 
 export const PlanetsContext = createContext();
 export const withPlanetsContext = withContextFactory(PlanetsContext);
