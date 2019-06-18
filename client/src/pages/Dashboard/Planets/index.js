@@ -1,7 +1,9 @@
-import React from 'react';
+import _ from 'lodash';
 
-const Planets = () => {
-  return <div>Planets</div>;
-};
+import { withPlanetsContext, withPlanetsProvider } from './PlanetsProvider';
+import Planets from './Planets';
 
-export default Planets;
+export default _.flow([
+  withPlanetsContext(({ planets }) => ({ planets }), ({ fetchPlanets }) => ({ fetchPlanets })),
+  withPlanetsProvider(),
+])(Planets);

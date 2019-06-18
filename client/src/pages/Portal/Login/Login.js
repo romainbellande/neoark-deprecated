@@ -7,7 +7,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import { shape, func } from 'prop-types';
+import { string, func, bool, shape } from 'prop-types';
 import { Formik } from 'formik';
 import Link from '@material-ui/core/Link';
 import * as yup from 'yup';
@@ -60,8 +60,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Login({ user, onSubmit }) {
+function Login({ onSubmit, user, isLoginPending }) {
   const classes = useStyles();
+
+  if (isLoginPending || !user) {
+    return <div>Pending</div>;
+  }
 
   return user ? (
     <Redirect to="/" />
@@ -90,12 +94,15 @@ function Login({ user, onSubmit }) {
 }
 
 Login.propTypes = {
-  user: shape({}),
+  isLoginPending: bool.isRequired,
+  token: string,
   onSubmit: func.isRequired,
+  user: shape({}),
 };
 
 Login.defaultProps = {
   user: null,
+  token: null,
 };
 
 export default Login;
