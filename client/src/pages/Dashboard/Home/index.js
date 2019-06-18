@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Planet from '../../components/Planet';
+import Planet from '../../../components/Planet';
 
 const Home = () => {
   return (

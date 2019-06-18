@@ -4,7 +4,6 @@ import { createMuiTheme, withStyles } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Hidden from '@material-ui/core/Hidden';
-import { BrowserRouter as Router } from 'react-router-dom';
 
 import Navigator from './Navigator';
 import Content from './Content';
@@ -161,32 +160,30 @@ class Paperbase extends React.Component {
     const { mobileOpen } = this.state;
 
     return (
-      <Router>
-        <ThemeProvider theme={theme}>
-          <div className={classes.root}>
-            <CssBaseline />
-            <nav className={classes.drawer}>
-              <Hidden smUp implementation="js">
-                <Navigator
-                  PaperProps={{ style: { width: drawerWidth } }}
-                  variant="temporary"
-                  open={mobileOpen}
-                  onClose={this.handleDrawerToggle}
-                />
-              </Hidden>
-              <Hidden xsDown implementation="css">
-                <Navigator PaperProps={{ style: { width: drawerWidth } }} />
-              </Hidden>
-            </nav>
-            <div className={classes.appContent}>
-              <Header onDrawerToggle={this.handleDrawerToggle} />
-              <main className={classes.mainContent}>
-                <Content />
-              </main>
-            </div>
+      <ThemeProvider theme={theme}>
+        <div className={classes.root}>
+          <CssBaseline />
+          <nav className={classes.drawer}>
+            <Hidden smUp implementation="js">
+              <Navigator
+                PaperProps={{ style: { width: drawerWidth } }}
+                variant="temporary"
+                open={mobileOpen}
+                onClose={this.handleDrawerToggle}
+              />
+            </Hidden>
+            <Hidden xsDown implementation="css">
+              <Navigator PaperProps={{ style: { width: drawerWidth } }} />
+            </Hidden>
+          </nav>
+          <div className={classes.appContent}>
+            <Header onDrawerToggle={this.handleDrawerToggle} />
+            <main className={classes.mainContent}>
+              <Content />
+            </main>
           </div>
-        </ThemeProvider>
-      </Router>
+        </div>
+      </ThemeProvider>
     );
   }
 }

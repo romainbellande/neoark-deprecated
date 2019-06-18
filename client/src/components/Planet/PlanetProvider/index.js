@@ -1,10 +1,10 @@
 import React, { createContext, useState } from 'react';
 import { node } from 'prop-types';
 
-import withContextFactory from '../../../helpers/with-context-factory';
-import withWrapper from '../../../helpers/with-wrapper';
-import buildingConfigurationssMock from '../../../mocks/building-configurations';
-import buildingsMock from '../../../mocks/buildings';
+import withContextFactory from '../../../common/helpers/with-context-factory';
+import withWrapper from '../../../common/helpers/with-wrapper';
+import buildingConfigurationssMock from '../../../common/mocks/building-configurations';
+import buildingsMock from '../../../common/mocks/buildings';
 import tilesJSON from './tiles';
 
 export const PlanetContext = createContext();
@@ -16,6 +16,11 @@ const PlanetProvider = ({ children }) => {
   const [buildingConfigurations] = useState(buildingConfigurationssMock);
   const [buildings] = useState(buildingsMock);
 
+  const upgradeBuildingById = async id => {
+    console.log('upgrade building with id: ', id);
+    return new Promise(resolve => resolve({ finished: 1560776697993 }));
+  };
+
   const value = {
     state: {
       tiles,
@@ -25,6 +30,7 @@ const PlanetProvider = ({ children }) => {
     },
     dispatch: {
       setSelectedBuildingId,
+      upgradeBuildingById,
     },
   };
 

@@ -5,7 +5,7 @@ use rocket::request::{self, FromRequest};
 use rocket::{Outcome, Request, State};
 use std::ops::Deref;
 
-const DATABASE_URL: &str = "postgres://neoark:neoark@localhost/neoark";
+const DATABASE_URL: &str = "postgres://neoark:neoark@localhost:5478/neoark";
 
 pub type PgPool = Pool<ConnectionManager<PgConnection>>;
 
