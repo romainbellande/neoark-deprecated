@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::prelude::*;
 
-const RECIPES_PATH: &str = "./client/src/mocks/recipes.json";
+const RECIPES_PATH: &str = "./client/src/common/mocks/recipes.json";
 const BUILDINGS_PATH: &str = "./client/src/common/mocks/building-configurations.json";
 
 #[derive(Serialize, Deserialize)]

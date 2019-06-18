@@ -161,10 +161,10 @@ impl Planet {
 
         for processor in _processors {
             let shared = Rc::new(RefCell::new(processor.clone()));
-            if let Some(timestamp) = &processor.upgrade_finish {
+            if let Some(finish_time) = &processor.upgrade_finish {
                 // if finish is in the past
-                if let Err(_) = timestamp.duration_since(time) {
-                    time = *timestamp;
+                if let Err(_) = finish_time.duration_since(SystemTime::now()) {
+                    time = *finish_time;
                     is_building = Some(shared.clone());
                 }
             }
