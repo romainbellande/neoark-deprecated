@@ -7,7 +7,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import { string, func, bool, shape } from 'prop-types';
+import { string, func, shape } from 'prop-types';
 import { Formik } from 'formik';
 import Link from '@material-ui/core/Link';
 import * as yup from 'yup';
@@ -22,11 +22,11 @@ const initialValues = {
 const validationSchema = yup.object({
   email: yup
     .string()
-    .email('Enter your email.')
+    // .email('Enter your email.')
     .required('Email is required !'),
   password: yup
     .string('')
-    .min(8, 'Password must contain at least 8 characters')
+    // .min(8, 'Password must contain at least 8 characters')
     .required('Enter your password'),
 });
 
@@ -60,12 +60,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Login({ onSubmit, user, isLoginPending }) {
+function Login({ onSubmit, user }) {
   const classes = useStyles();
-
-  if (isLoginPending || !user) {
-    return <div>Pending</div>;
-  }
 
   return user ? (
     <Redirect to="/" />
@@ -94,7 +90,6 @@ function Login({ onSubmit, user, isLoginPending }) {
 }
 
 Login.propTypes = {
-  isLoginPending: bool.isRequired,
   token: string,
   onSubmit: func.isRequired,
   user: shape({}),

@@ -15,17 +15,15 @@ const PlanetProvider = ({ children, client }) => {
   const [inventory, setInventory] = useState(null);
   const [planet, setPlanet] = useState(null);
   const [processors, setProcessors] = useState([]);
+  const [production, setProduction] = useState();
 
   const fetchPlanet = async id => {
     const { data } = await client.get(`/planets/${id}`);
     setInventory(data.inventory);
     setPlanet(data.planet);
     setProcessors(data.processors);
+    setProduction(data.production);
     return data;
-  };
-
-  const upgradeBuildingById = async id => {
-    return new Promise(resolve => resolve({ finished: 1560776697993 }));
   };
 
   const value = {
@@ -36,10 +34,10 @@ const PlanetProvider = ({ children, client }) => {
       buildings,
       selectedBuildingId,
       buildingConfigurations,
+      production,
     },
     dispatch: {
       setSelectedBuildingId,
-      upgradeBuildingById,
       fetchPlanet,
     },
   };
