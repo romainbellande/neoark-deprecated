@@ -1,6 +1,7 @@
 import _ from 'lodash';
 
-import { withPlanetProvider, withPlanetContext } from './PlanetProvider';
+import withWrapper from '../../common/helpers/with-wrapper';
+import PlanetProvider, { withPlanetContext } from './PlanetProvider';
 import Planet from './Planet';
 
 export default _.flow([
@@ -11,5 +12,5 @@ export default _.flow([
       upgradeBuildingById,
     })
   ),
-  withPlanetProvider(),
+  withWrapper(PlanetProvider)(),
 ])(Planet);

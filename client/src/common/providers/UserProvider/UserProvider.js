@@ -1,32 +1,36 @@
-import React, { createContext, useState } from 'react';
-import { func, node } from 'prop-types';
+import React, { createContext, useState, useEffect } from 'react';
+import { func, node, bool } from 'prop-types';
 
 import withContextFactory from '../../helpers/with-context-factory';
 
 export const UserContext = createContext();
 export const withUserContext = withContextFactory(UserContext);
 
-function UserProvider({ client, children, setToken }) {
+function UserProvider({ client, children, setToken, isLoggedIn }) {
   const [user, setUser] = useState(null);
+
+  const fetchUser = async (options = {}) => {
+    const { data } = await client.get('/players/me', options);
+    setUser(data);
+  };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchUser();
+    }
+  }, [isLoggedIn]);
 
   const register = async ({ username, password, email }) => {
     const { data } = await client.post('/players/register', { username, password, email });
     setUser(data);
-    console.log('data', data);
-  };
-
-  const fetchUser = async () => {
-    const { data } = await client.get('/players/me');
-    return data;
   };
 
   const login = async ({ email, password }) => {
     const {
       data: { token: newToken },
     } = await client.post('/players/login', { email, password });
-    const userData = await fetchUser();
     setToken(newToken);
-    setUser(userData);
+    await fetchUser({ headers: { authentication: newToken } });
   };
 
   const logout = () => {
@@ -48,6 +52,7 @@ function UserProvider({ client, children, setToken }) {
 }
 
 UserProvider.propTypes = {
+  isLoggedIn: bool.isRequired,
   client: func.isRequired,
   children: node.isRequired,
   setToken: func.isRequired,
