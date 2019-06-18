@@ -311,6 +311,7 @@ impl Planet {
             let mut building = building.borrow_mut();
 
             building.level += 1;
+            building.upgrade_finished = Some(time);
             building.upgrade_finish = None;
 
             if !building.save(conn) {

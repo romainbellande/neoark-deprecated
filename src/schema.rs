@@ -32,6 +32,7 @@ table! {
         planet_id -> Int4,
         level -> Int4,
         upgrade_finish -> Nullable<Timestamp>,
+        upgrade_finished -> Nullable<Timestamp>,
         ratio -> Numeric,
         recipe -> Int4,
     }

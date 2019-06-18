@@ -13,6 +13,7 @@ pub struct Processor {
     pub planet_id: i32,
     pub level: i32,
     pub upgrade_finish: Option<SystemTime>,
+    pub upgrade_finished: Option<SystemTime>,
     pub ratio: BigDecimal,
     pub recipe: i32,
 }
@@ -25,6 +26,7 @@ impl Processor {
             planet_id,
             level: 0,
             upgrade_finish: None,
+            upgrade_finished: None,
             ratio: BigDecimal::from(1.0),
             recipe: -1,
         }
