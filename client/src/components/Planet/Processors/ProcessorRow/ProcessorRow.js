@@ -4,10 +4,21 @@ import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Fab from '@material-ui/core/Fab';
 import NavigationIcon from '@material-ui/icons/Navigation';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import moment from 'moment';
+import Tooltip from '@material-ui/core/Tooltip';
+import { withStyles } from '@material-ui/styles';
 
 import useInterval from '../../../../common/helpers/use-interval';
+
+const HtmlTooltip = withStyles(theme => ({
+  tooltip: {
+    backgroundColor: '#f5f5f9',
+    color: 'rgba(0, 0, 0, 0.87)',
+    maxWidth: 220,
+    fontSize: theme.typography.pxToRem(12),
+    border: '1px solid #dadde9',
+  },
+}))(Tooltip);
 
 const getRemainingTime = (totalMS, percent) => {
   const time = totalMS - percent / totalMS;
@@ -16,7 +27,6 @@ const getRemainingTime = (totalMS, percent) => {
 
 function ProcessorRow({ id, recipe, level, ratio, resources, classes }) {
   let startPercents = 0;
-
 
   if (recipe.id >= 0 && resources[recipe.id] != null) {
     const amount = resources[recipe.id].value;
@@ -53,19 +63,30 @@ function ProcessorRow({ id, recipe, level, ratio, resources, classes }) {
 
   const remainingTimeFormatted = moment(remainingTime).format('mm:ss');
 
+  const getUpgradeTooltipText = () => (
+    <div>
+      <div>metal: 10</div>
+      <div>deuterium: 30</div>
+    </div>
+  );
+
   return (
     <>
       <TableRow key={id}>
-        <TableCell component="th" scope="row">{level}</TableCell>
-        <TableCell align="right">
-          {recipe.name}
+        <TableCell component="th" scope="row">
+          {level}
         </TableCell>
-        <TableCell align="right">{(recipe.speed * ratio).toFixed(2)}/h ({recipe.speed})</TableCell>
+        <TableCell align="right">{recipe.name}</TableCell>
+        <TableCell align="right">
+          {(recipe.speed * ratio).toFixed(2)}/h ({recipe.speed})
+        </TableCell>
         <TableCell align="right">{(ratio * 100).toFixed(2)}%</TableCell>
         <TableCell align="right">
-          <Fab size="small" color="primary" aria-label="Add" className={classes.margin}>
-            <NavigationIcon className={classes.extendedIcon} />
-          </Fab>
+          <HtmlTooltip title={getUpgradeTooltipText()}>
+            <Fab size="small" color="primary" aria-label="Add" className={classes.margin}>
+              <NavigationIcon className={classes.extendedIcon} />
+            </Fab>
+          </HtmlTooltip>
         </TableCell>
       </TableRow>
     </>
