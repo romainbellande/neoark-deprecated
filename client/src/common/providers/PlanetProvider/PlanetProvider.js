@@ -36,10 +36,10 @@ const PlanetProvider = ({ children, client }) => {
         name,
         netAmount,
         currentPercent,
-        consumed: Math.floor(parseFloat(actualRate)),
-        produced: Math.floor(parseFloat(producingRate)),
-        consumedRate: parseFloat(actualRate),
-        producedTate: parseFloat(producingRate),
+        consumed: parseFloat(actualRate).toFixed(2),
+        produced: parseFloat(producingRate).toFixed(2),
+        consumedRate: parseFloat(actualRate).toFixed(2),
+        producedTate: parseFloat(producingRate).toFixed(2),
       };
     });
 
@@ -53,11 +53,11 @@ const PlanetProvider = ({ children, client }) => {
       id,
       name,
       netAmount: null,
-      currentPercent: parseFloat(ratio),
-      consumed: Math.floor(parseFloat(consumed)),
-      produced: Math.floor(parseFloat(produced)),
-      consumedRate: parseFloat(consumed),
-      producedRate: parseFloat(produced),
+      currentPercent: parseFloat(ratio).toFixed(2),
+      consumed: parseFloat(consumed).toFixed(2),
+      produced: parseFloat(produced).toFixed(2),
+      consumedRate: parseFloat(consumed).toFixed(2),
+      producedRate: parseFloat(produced).toFixed(2),
     };
   };
 

@@ -8,11 +8,11 @@ export default () => ({
   productionItem: {
     display: 'flex',
     marginRight: '10px',
-    '&:first-child': {
-      color: green[500],
-    },
-    '&:last-child': {
-      color: red[500],
-    },
+    // '&:first-child': {
+    //   color: green[500],
+    // },
+    // '&:last-child': {
+    //   color: red[500],
+    // },
   },
 });
