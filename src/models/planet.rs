@@ -134,7 +134,7 @@ impl Planet {
             }
 
             // if not generator
-            if processor.recipe != 3 && use_processor_ratio == true{
+            if processor.recipe != 3 && use_processor_ratio == true {
                 processor.ratio = (ratio.clone() * elec_ratio.clone()).with_prec(6);
             }
         }
@@ -142,7 +142,9 @@ impl Planet {
         global_production_context
     }
     // -> ((produced, consumed), ratio)
-    pub fn calc_electric_ratio(processors: &Vec<Processor>) -> ((BigDecimal, BigDecimal), BigDecimal) { 
+    pub fn calc_electric_ratio(
+        processors: &Vec<Processor>,
+    ) -> ((BigDecimal, BigDecimal), BigDecimal) {
         let mut total_conso = BigDecimal::from(0);
         let mut total_prod = BigDecimal::from(0);
 
@@ -150,33 +152,39 @@ impl Planet {
             if processor.recipe < 0 {
                 continue;
             }
-            
             let recipe = &RECIPES.get(&processor.recipe).unwrap();
 
-            total_conso += BigDecimal::from(recipe.conso) * BigDecimal::from(processor.level) * BigDecimal::from((1.1 as f64).powf(processor.level.into()));
+            total_conso += BigDecimal::from(recipe.conso)
+                * BigDecimal::from(processor.level)
+                * BigDecimal::from((1.1 as f64).powf(processor.level.into()));
 
             // if it is a generator
             if processor.recipe == 3 {
-                total_prod += BigDecimal::from(recipe.speed) * BigDecimal::from(processor.level) * (BigDecimal::from((0.9 as f64).powf(processor.level.into())));
+                total_prod += BigDecimal::from(recipe.speed)
+                    * BigDecimal::from(processor.level)
+                    * (BigDecimal::from((0.9 as f64).powf(processor.level.into())));
             }
         }
 
         let mut ratio = BigDecimal::from(1.0).with_prec(6);
 
-        let new_ratio = total_prod.clone()/total_conso.clone();
+        let new_ratio = total_prod.clone() / total_conso.clone();
 
         if new_ratio.clone() < ratio.clone() {
             ratio = new_ratio;
         }
 
-        ((total_prod.with_prec(6), total_conso.with_prec(6)), ratio.with_prec(6))
+        (
+            (total_prod.with_prec(6), total_conso.with_prec(6)),
+            ratio.with_prec(6),
+        )
     }
 
     pub fn refresh_for(
         planet_id: i32,
         conn: &diesel::PgConnection,
     ) -> (
-        HashMap<i32, i32>,
+        HashMap<i32, BigDecimal>,
         Vec<Processor>,
         HashMap<i32, ProductionContextRes>,
         ((BigDecimal, BigDecimal), BigDecimal),
@@ -188,7 +196,7 @@ impl Planet {
         &self,
         conn: &diesel::PgConnection,
     ) -> (
-        HashMap<i32, i32>,
+        HashMap<i32, BigDecimal>,
         Vec<Processor>,
         HashMap<i32, ProductionContextRes>,
         ((BigDecimal, BigDecimal), BigDecimal),
@@ -227,8 +235,12 @@ impl Planet {
         let elec_summary = Self::calc_electric_ratio(&_processors);
         let (_, elec_ratio) = elec_summary.clone();
 
-        let mut global_production_context =
-            Self::get_production_context(processors.clone(), elapsed.clone(), elec_ratio.clone(), false);
+        let mut global_production_context = Self::get_production_context(
+            processors.clone(),
+            elapsed.clone(),
+            elec_ratio.clone(),
+            false,
+        );
 
         let mut prod_res = HashMap::new();
 
@@ -247,7 +259,6 @@ impl Planet {
 
             for processor in &value.attached_processors {
                 let mut guard = processor.borrow_mut();
- 
                 if let Some(_) = guard.upgrade_finish {
                     guard.ratio = BigDecimal::zero().with_prec(6);
                     guard.save(conn);
@@ -262,8 +273,12 @@ impl Planet {
             );
         }
 
-        let mut global_production_context2 =
-            Self::get_production_context(processors.clone(), elapsed.clone(), elec_ratio.clone(), true);
+        let mut global_production_context2 = Self::get_production_context(
+            processors.clone(),
+            elapsed.clone(),
+            elec_ratio.clone(),
+            true,
+        );
 
         for (key, value) in global_production_context2.iter_mut() {
             value.rate = (value.produced.clone() - value.consumed.clone()) / elapsed.clone();
@@ -272,7 +287,8 @@ impl Planet {
 
             prod_res.get_mut(&key).unwrap().actual_rate = value.rate.clone();
 
-            *total.entry(*key).or_default() += value.produced.with_prec(6).clone() - value.consumed.with_prec(6).clone()
+            *total.entry(*key).or_default() +=
+                value.produced.with_prec(6).clone() - value.consumed.with_prec(6).clone()
         }
 
         let mut _processors = vec![];
@@ -287,7 +303,7 @@ impl Planet {
         let mut total_cell = HashMap::new();
 
         for (k, v) in total.iter() {
-            total_cell.insert(k.clone(), v.to_i32().unwrap());
+            total_cell.insert(k.clone(), v.with_prec(6));
         }
 
         // must recurse
