@@ -3,6 +3,7 @@
     "id": 0,
     "name": "Processor",
     "level_multiplier": 1.5,
+    "energy_cost": 10,
     "costs": [
       {
         "id": 0,

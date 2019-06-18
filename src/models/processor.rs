@@ -1,4 +1,4 @@
-use bigdecimal::{BigDecimal, Zero};
+use bigdecimal::{BigDecimal, Zero, ToPrimitive};
 use diesel::prelude::*;
 use std::ops::Add;
 use std::time::{Duration, SystemTime};
@@ -47,7 +47,7 @@ impl Processor {
         use schema::processors::dsl::*;
 
         processors
-            .filter(upgrade_finish.ne(None as Option<SystemTime>))
+            .filter(upgrade_finish.is_distinct_from(None as Option<SystemTime>))
             .filter(planet_id.eq(planet_id_given))
             .order(id.desc())
             .load::<Processor>(conn)
@@ -81,7 +81,9 @@ impl Processor {
 
         let mut inventory = Inventory::fetch_by_planet(planet_id, conn).unwrap();
 
-        let has_bought = inventory.buy(&Inventory::cost_of(&0, 1), conn);
+        let cost = Inventory::cost_of(&0, 1);
+
+        let has_bought = inventory.buy(&cost, conn);
 
         if !has_bought {
             return Err("Not enough".to_string());
@@ -89,7 +91,14 @@ impl Processor {
 
         let mut processor = Processor::new(inventory.player_id, *planet_id);
 
-        processor.upgrade_finish = Some(SystemTime::now().add(Duration::from_secs(10)));
+        let build_time = {
+            let metal = cost.get(&0).unwrap().to_u64().unwrap();
+            let crystal = cost.get(&0).unwrap().to_u64().unwrap();
+
+            Duration::from_secs((metal + crystal) / (2500) * 60 * 60)
+        };
+
+        processor.upgrade_finish = Some(SystemTime::now().add(build_time));
 
         processor.save(conn);
 

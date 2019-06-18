@@ -84,17 +84,19 @@ impl Planet {
     ) -> HashMap<i32, ProductionContext> {
         let mut global_production_context: HashMap<i32, ProductionContext> = HashMap::new();
 
-        for processor in processors {
-            if processor.borrow().recipe < 0 || processor.borrow().upgrade_finish.is_some() {
+        for _processor in processors {
+            let processor = _processor.borrow();
+
+            if processor.recipe < 0 || processor.upgrade_finish.is_some() {
                 continue;
             }
             let ratio = if use_processor_ratio {
-                processor.borrow().ratio.clone()
+                processor.ratio.clone()
             } else {
                 BigDecimal::from(1.0)
             };
 
-            let recipe = &RECIPES.get(&processor.borrow().recipe).unwrap();
+            let recipe = &RECIPES.get(&processor.recipe).unwrap();
 
             let i = &recipe.i;
             let o = &recipe.o;
@@ -105,11 +107,13 @@ impl Planet {
                     .or_insert(ProductionContext::new(to_consume.id));
 
                 entry.consumed += elapsed.clone()
-                    * BigDecimal::from(recipe.speed)
+                    * (BigDecimal::from(recipe.speed)
+                        * BigDecimal::from(processor.level)
+                        * BigDecimal::from((1.1 as f64).powf(processor.level.into())))
                     * to_consume.amount.clone()
                     * ratio.clone();
 
-                entry.attached_processors.push(processor.clone())
+                entry.attached_processors.push(_processor.clone())
             }
 
             for to_produce in o {
@@ -118,7 +122,9 @@ impl Planet {
                     .or_insert(ProductionContext::new(to_produce.id));
 
                 entry.produced += elapsed.clone()
-                    * BigDecimal::from(recipe.speed)
+                    * (BigDecimal::from(recipe.speed)
+                        * BigDecimal::from(processor.level)
+                        * BigDecimal::from((1.1 as f64).powf(processor.level.into())))
                     * to_produce.amount.clone()
                     * ratio.clone();
             }
