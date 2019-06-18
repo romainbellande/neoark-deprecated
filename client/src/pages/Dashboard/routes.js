@@ -12,6 +12,7 @@ import Fleet from './Fleet';
 import Planets from './Planets';
 import Settings from './Settings';
 import Research from './Research';
+import Planet from '../../components/Planet';
 
 export const categoryRoutes = [
   {
@@ -50,7 +51,6 @@ export const categoryRoutes = [
   {
     id: 'Settings',
     icon: <SettingsInputComponentIcon />,
-    to: '/',
     slug: 'settings',
     path: '/settings',
     exact: true,
@@ -58,6 +58,13 @@ export const categoryRoutes = [
   },
 ];
 
-const routes = [...categoryRoutes];
+const subRoutes = [
+  {
+    path: '/planets/:id',
+    component: Planet,
+  },
+];
+
+const routes = [...categoryRoutes, ...subRoutes];
 
 export default routes;
