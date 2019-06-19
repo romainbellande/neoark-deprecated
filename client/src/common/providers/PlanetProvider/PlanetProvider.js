@@ -79,12 +79,12 @@ const PlanetProvider = ({ children, client }) => {
   const getMaxProcessorsProductionByRecipeId = recipeId =>
     getProcessorsByRecipeId(recipeId)
       .map(({ id }) => getMaxProcessorProduction(id))
-      .reduce((prev, current) => prev + current);
+      .reduce((prev, current) => prev + current, 0);
 
   const getProcessorsProductionByRecipeId = recipeId =>
     getProcessorsByRecipeId(recipeId)
       .map(({ id }) => getProcessorProduction(id))
-      .reduce((prev, current) => prev + current);
+      .reduce((prev, current) => prev + current, 0);
 
   // Electricity Management (TODO: to move)
 
