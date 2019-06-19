@@ -6,27 +6,19 @@ import buildingConfigurationssMock from '../../mocks/building-configurations';
 import buildingsMock from '../../mocks/buildings';
 import recipes from '../../mocks/recipes.json';
 import items from '../../mocks/items.json';
+import buildingConfigurationsFormatter from './formatters/building-configurations.formatter';
+import electricityFormatter from './formatters/electricity.formatter';
+import inventoryFormatter from './formatters/inventory.formatter';
+import processorsFormatter from './formatters/processors.formatter';
 
 export const PlanetContext = createContext();
 export const withPlanetContext = withContextFactory(PlanetContext);
 
 const PlanetProvider = ({ children, client }) => {
-  const formattedBuildingConfigurationsMock = buildingConfigurationssMock.map(
-    ({ id, name, level_multiplier: levelMultiplier, energy_cost: energyCost, costs }) => ({
-      id,
-      name,
-      levelMultiplier,
-      energyCost,
-      costs: costs.map(({ id: costId, amount }) => ({
-        id: costId,
-        amount,
-        name: recipes.find(({ id: recipeId }) => recipeId === costId).name,
-      })),
-    })
-  );
-
   const [selectedBuildingId, setSelectedBuildingId] = useState(null);
-  const [buildingConfigurations] = useState(formattedBuildingConfigurationsMock);
+  const [buildingConfigurations] = useState(
+    buildingConfigurationsFormatter(buildingConfigurationssMock, recipes)
+  );
   const [buildings] = useState(buildingsMock);
   const [inventory, setInventory] = useState(null);
   const [planet, setPlanet] = useState(null);
@@ -34,92 +26,19 @@ const PlanetProvider = ({ children, client }) => {
   const [production, setProduction] = useState();
   const [electricity, setElectricity] = useState(null);
 
-  const formatInventory = (myInventory, myProduction) =>
-    Object.keys(myInventory).map(key => {
-      const id = parseInt(key, 10);
-      const amount = myInventory[id];
-      const netAmount = Math.floor(amount);
-      const currentPercent = Math.abs(amount - netAmount);
-      const currentProduction = myProduction[id];
-      let actualRate = 0;
-      let producedRate = 0;
-
-      if (currentProduction) {
-        actualRate = currentProduction.actual_rate;
-        producedRate = currentProduction.producing_rate;
-      }
-
-      const { name } = items.find(item => item.id === id);
-
-      return {
-        id,
-        name,
-        netAmount,
-        currentPercent,
-        consumed: parseFloat(actualRate).toFixed(2),
-        produced: parseFloat(producedRate).toFixed(2),
-        consumedRate: parseFloat(actualRate).toFixed(2),
-        producedTate: parseFloat(producedRate).toFixed(2),
-      };
-    });
-
-  const formatElectricity = (myElectricity, myRecipes) => {
-    const id = 3;
-    const { produced, consumed, ratio } = myElectricity;
-    const recipe = myRecipes.find(item => item.id === id);
-    const name = 'Electricity';
-
-    return {
-      id,
-      name,
-      netAmount: null,
-      currentPercent: parseFloat(ratio).toFixed(2),
-      consumed: parseFloat(consumed).toFixed(2),
-      produced: parseFloat(produced).toFixed(2),
-      consumedRate: parseFloat(consumed).toFixed(2),
-      producedRate: parseFloat(produced).toFixed(2),
-    };
-  };
-
-  const formatProcessors = (myProcessors, myRecipes) => {
-    return myProcessors.map(processor => {
-      const { id, level, ratio, recipe: recipeId, upgrade_finish: upgradeFinish } = processor;
-      const recipeItem = myRecipes.find(item => item.id === recipeId);
-      const buildingConfiguration = buildingConfigurationssMock[0];
-      const upgradeCosts = buildingConfiguration.costs.map(({ id: costRecipeId, amount }) => ({
-        id: costRecipeId,
-        amount,
-        name: myRecipes.find(item => item.id === costRecipeId).name,
-      }));
-
-      return {
-        id,
-        level,
-        ratio: parseFloat(ratio),
-        upgradeFinish: upgradeFinish ? upgradeFinish.secs_since_epoch * 1000 : null,
-        upgradeCosts,
-        recipe: recipeItem
-          ? {
-              id: recipeItem.id,
-              name: recipeItem.name,
-              speed: recipeItem.speed,
-              input: recipeItem.i,
-              output: recipeItem.o,
-            }
-          : null,
-      };
-    });
-  };
-
   const fetchPlanet = async id => {
     const { data } = await client.get(`/planets/${id}`);
-    const formattedElectricity = formatElectricity(data.electricity, recipes);
+    const formattedElectricity = electricityFormatter(data.electricity);
     setElectricity(formattedElectricity);
     setPlanet(data.planet);
-    const formattedProcessors = formatProcessors(data.processors, recipes);
+    const formattedProcessors = processorsFormatter(
+      data.processors,
+      recipes,
+      buildingConfigurationssMock
+    );
     setProcessors(formattedProcessors);
     setProduction(data.production);
-    const formattedInventory = formatInventory(data.inventory, data.production);
+    const formattedInventory = inventoryFormatter(items, data.inventory, data.production);
     setInventory(formattedInventory);
     return data;
   };
@@ -141,6 +60,38 @@ const PlanetProvider = ({ children, client }) => {
     await fetchCurrentPlanet();
   };
 
+  const getProcessor = processorId => processors.find(({ id }) => processorId === id);
+
+  // Electricity Management (TODO: to move)
+
+  const getMaxProcessorElectricityConsumption = processorId => {
+    const processor = getProcessor(processorId);
+    return (processor.recipe.conso * processor.level *  1.1 ** processor.level).toFixed(1);
+  };
+
+  const getProcessorElectricityConsumption = processorId =>
+    (getMaxProcessorElectricityConsumption(processorId) * electricity.currentPercent).toFixed(1);
+
+  const getGeneratorProduction = generatorId => {
+    const generator = getProcessor(generatorId);
+    const recipe = recipes.find(({ id }) => id === 3);
+    const value = recipe.speed * generator.level * 1.1 ** generator.level;
+    return value.toFixed(1);
+  };
+
+  const getGenerators = () => processors.filter(({ recipe }) => recipe.id === 3);
+
+  const getTotalElectricityProduction = () =>
+    getGenerators().map(({ id }) => getGeneratorProduction(id));
+
+  const getMaxTotalElectricityConsumption = () =>
+    processors
+      .filter(({ id }) => id !== 3)
+      .map(({ id }) => getMaxProcessorElectricityConsumption(id));
+
+  const getTotalElectricityConsumption = () =>
+    Math.floor(getMaxTotalElectricityConsumption() * electricity.currentPercent);
+
   const value = {
     state: {
       electricity,
@@ -159,6 +110,12 @@ const PlanetProvider = ({ children, client }) => {
       upgradeProcessor,
       buyProcessor,
       changeProcessorRecipe,
+      getProcessorElectricityConsumption,
+      getMaxProcessorElectricityConsumption,
+      getMaxTotalElectricityConsumption,
+      getTotalElectricityConsumption,
+      getTotalElectricityProduction,
+      getGeneratorProduction,
     },
   };
 
