@@ -2,28 +2,11 @@ use bigdecimal::BigDecimal;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::prelude::*;
-use serde::*;
-use serde_json::*;
 
 const RECIPES_PATH: &str = "./client/src/common/mocks/recipes.json";
 const BUILDINGS_PATH: &str = "./client/src/common/mocks/building-configurations.json";
 const TECHNOLOGIES_PATH: &str = "./client/src/common/mocks/technologies.json";
 const SHIPS_PATH: &str = "./client/src/common/mocks/technologies.json";
-
-fn read_file<'a, T>(path: &str) -> Vec<T> where T: Deserialize<'a> {
-    let mut m = HashMap::new();
-
-    let mut file = File::open(path).expect("could not open file");
-
-    let mut contents = String::new();
-
-    file.read_to_string(&mut contents).unwrap();
-
-    let recipes: Vec<T> =
-        serde_json::from_str(&contents).expect((&"Cannot deserialize ".to_string() + &path.to_string()));
-
-    recipes
-}
 
 #[derive(Serialize, Deserialize)]
 pub struct Item {
@@ -52,7 +35,14 @@ lazy_static! {
     pub static ref RECIPES: HashMap<i32, Recipe> = {
         let mut m = HashMap::new();
 
-        let recipes: Vec<Recipe> =  read_file(RECIPES_PATH);
+        let mut file = File::open(RECIPES_PATH).expect("could not open file");
+
+        let mut contents = String::new();
+
+        file.read_to_string(&mut contents).unwrap();
+
+        let recipes: Vec<Recipe> =
+            serde_json::from_str(&contents).expect("Cannot deserialize recipes.json");
 
         for recipe in recipes {
             m.insert(recipe.id, recipe);
@@ -74,7 +64,14 @@ lazy_static! {
     pub static ref BUILDINGS: HashMap<i32, Building> = {
         let mut m = HashMap::new();
 
-        let buildings: Vec<Building> = read_file(BUILDINGS_PATH);
+        let mut file = File::open(BUILDINGS_PATH).expect("could not open file");
+
+        let mut contents = String::new();
+
+        file.read_to_string(&mut contents).unwrap();
+
+        let buildings: Vec<Building> =
+            serde_json::from_str(&contents).expect("Cannot deserialize buildings.json");
 
         for building in buildings {
             m.insert(building.id, building);
@@ -96,8 +93,15 @@ lazy_static! {
     pub static ref TECHNOLOGIES: HashMap<i32, Technology> = {
         let mut m = HashMap::new();
 
-        let technologies: Vec<Technology> = read_file(TECHNOLOGIES_PATH);
-        
+        let mut file = File::open(TECHNOLOGIES_PATH).expect("could not open file");
+
+        let mut contents = String::new();
+
+        file.read_to_string(&mut contents).unwrap();
+
+        let technologies: Vec<Technology> =
+            serde_json::from_str(&contents).expect("Cannot deserialize technologies.json");
+
         for technology in technologies {
             m.insert(technology.id, technology);
         }
@@ -117,8 +121,15 @@ lazy_static! {
     pub static ref SHIPS: HashMap<i32, Ship> = {
         let mut m = HashMap::new();
 
-        let ships: Vec<Ship> = read_file(SHIPS_PATH);
-        
+        let mut file = File::open(SHIPS_PATH).expect("could not open file");
+
+        let mut contents = String::new();
+
+        file.read_to_string(&mut contents).unwrap();
+
+        let ships: Vec<Ship> =
+            serde_json::from_str(&contents).expect("Cannot deserialize ships.json");
+
         for ship in ships {
             m.insert(ship.id, ship);
         }
