@@ -23,6 +23,7 @@ impl Server {
             .mount("/api/v1/players", player_route::mount())
             .mount("/api/v1/planets", planet_route::mount())
             .mount("/api/v1/processors", processor_route::mount())
+            .mount("/api/v1/technologies", technology_route::mount())
             .launch();
     }
 }

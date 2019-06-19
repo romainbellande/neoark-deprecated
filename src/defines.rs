@@ -5,6 +5,7 @@ use std::io::prelude::*;
 
 const RECIPES_PATH: &str = "./client/src/common/mocks/recipes.json";
 const BUILDINGS_PATH: &str = "./client/src/common/mocks/building-configurations.json";
+const TECHNOLOGIES_PATH: &str = "./client/src/common/mocks/technologies.json";
 
 #[derive(Serialize, Deserialize)]
 pub struct Item {
@@ -73,6 +74,35 @@ lazy_static! {
 
         for building in buildings {
             m.insert(building.id, building);
+        }
+
+        m
+    };
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Technology {
+    pub id: i32,
+    pub name: String,
+    pub cost: Vec<Item>,
+    pub deps: Vec<i32>,
+}
+
+lazy_static! {
+    pub static ref TECHNOLOGIES: HashMap<i32, Technology> = {
+        let mut m = HashMap::new();
+
+        let mut file = File::open(TECHNOLOGIES_PATH).expect("could not open file");
+
+        let mut contents = String::new();
+
+        file.read_to_string(&mut contents).unwrap();
+
+        let technologies: Vec<Technology> =
+            serde_json::from_str(&contents).expect("Cannot deserialize technologies.json");
+
+        for technology in technologies {
+            m.insert(technology.id, technology);
         }
 
         m

@@ -1,0 +1,39 @@
+[
+    {
+        "id": 0,
+        "name": "Dummy research",
+        "cost": [
+            {
+                "id": 3,
+                "amount": 1
+            }
+        ],
+        "deps": []
+    },
+    {
+        "id": 1,
+        "name": "Spacial Transport",
+        "cost": [
+            {
+                "id": 3,
+                "amount": 25
+            }
+        ],
+        "deps": [
+            0
+        ]
+    },
+    {
+        "id": 2,
+        "name": "Small transporter",
+        "cost": [
+            {
+                "id": 3,
+                "amount": 100
+            }
+        ],
+        "deps": [
+            1
+        ]
+    }
+]

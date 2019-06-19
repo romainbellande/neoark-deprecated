@@ -25,7 +25,7 @@ CREATE TABLE inventories (
     last_update TIMESTAMP NOT NULL
 );
 
-INSERT INTO inventories (player_id, planet_id, items, last_update) VALUES (1, 1, '{"0":10000,"1":10000}', NOW());
+INSERT INTO inventories (player_id, planet_id, items, last_update) VALUES (1, 1, '{"0":10000,"1":10000, "3": 1000}', NOW());
 
 CREATE TABLE processors (
     id SERIAL PRIMARY KEY,
@@ -38,7 +38,33 @@ CREATE TABLE processors (
     recipe INTEGER NOT NULL
 );
 
-INSERT INTO processors (player_id, planet_id, level, upgrade_finish, ratio, user_ratio, recipe) VALUES (1, 1, 1, NULL, 1.0, 100, 0);
-INSERT INTO processors (player_id, planet_id, level, upgrade_finish, ratio, user_ratio, recipe) VALUES (1, 1, 1, NULL, 1.0, 100, 1);
-INSERT INTO processors (player_id, planet_id, level, upgrade_finish, ratio, user_ratio, recipe) VALUES (1, 1, 1, NULL, 1.0, 100, 2);
-INSERT INTO processors (player_id, planet_id, level, upgrade_finish, ratio, user_ratio, recipe) VALUES (1, 1, 1, NULL, 1.0, 100, 3);
+-- miners
+INSERT INTO processors (player_id, planet_id, level, upgrade_finish, ratio, user_ratio, recipe) VALUES (1, 1, 30, NULL, 1.0, 100, 0);
+INSERT INTO processors (player_id, planet_id, level, upgrade_finish, ratio, user_ratio, recipe) VALUES (1, 1, 30, NULL, 1.0, 100, 1);
+INSERT INTO processors (player_id, planet_id, level, upgrade_finish, ratio, user_ratio, recipe) VALUES (1, 1, 30, NULL, 1.0, 100, 2);
+
+-- elec
+INSERT INTO processors (player_id, planet_id, level, upgrade_finish, ratio, user_ratio, recipe) VALUES (1, 1, 50, NULL, 1.0, 100, 3);
+
+-- intermediary
+INSERT INTO processors (player_id, planet_id, level, upgrade_finish, ratio, user_ratio, recipe) VALUES (1, 1, 5, NULL, 1.0, 100, 5);
+INSERT INTO processors (player_id, planet_id, level, upgrade_finish, ratio, user_ratio, recipe) VALUES (1, 1, 9, NULL, 1.0, 100, 6);
+INSERT INTO processors (player_id, planet_id, level, upgrade_finish, ratio, user_ratio, recipe) VALUES (1, 1, 10, NULL, 1.0, 100, 7);
+
+-- science pack
+INSERT INTO processors (player_id, planet_id, level, upgrade_finish, ratio, user_ratio, recipe) VALUES (1, 1, 2, NULL, 1.0, 100, 4);
+
+-- lab
+INSERT INTO processors (player_id, planet_id, level, upgrade_finish, ratio, user_ratio, recipe) VALUES (1, 1, 1, NULL, 1.0, 100, 8);
+
+CREATE TABLE technologies (
+    id SERIAL PRIMARY KEY,
+    player_id INTEGER REFERENCES players(id) NOT NULL,
+    planet_id INTEGER REFERENCES planets(id) NOT NULL,
+    current_research INTEGER NOT NULL,
+    current_progress DECIMAL(15, 6) NOT NULL,
+    searched VARCHAR NOT NULL,
+    last_update TIMESTAMP NOT NULL
+);
+
+INSERT INTO technologies (player_id, planet_id, current_research, current_progress, searched, last_update) VALUES (1, 1, -1, 0, '{}', NOW());

@@ -8,7 +8,7 @@ use std::time::SystemTime;
 use super::super::defines::RECIPES;
 use super::schema;
 use super::schema::planets;
-use super::{Inventory, Processor};
+use super::{Inventory, Processor, Technology};
 
 #[derive(Default, Debug, Clone)]
 pub struct ProductionContext {
@@ -96,7 +96,10 @@ impl Planet {
         for _processor in processors {
             let mut processor = _processor.borrow_mut();
 
-            if processor.recipe < 0 || processor.upgrade_finish.is_some() || processor.user_ratio == 0 {
+            if processor.recipe < 0
+                || processor.upgrade_finish.is_some()
+                || processor.user_ratio == 0
+            {
                 continue;
             }
             let ratio = if use_processor_ratio {
@@ -140,12 +143,14 @@ impl Planet {
                     * ratio.clone()
                     * elec_ratio.clone()
                     * BigDecimal::from(processor.user_ratio as f64 / 100.0);
-
             }
 
             // if not generator
             if processor.recipe != 3 && use_processor_ratio == true {
-                processor.ratio = (ratio.clone() * elec_ratio.clone() * BigDecimal::from(processor.user_ratio as f64 / 100.0)).with_prec(6);
+                processor.ratio = (ratio.clone()
+                    * elec_ratio.clone()
+                    * BigDecimal::from(processor.user_ratio as f64 / 100.0))
+                .with_prec(6);
             }
         }
 
@@ -175,7 +180,7 @@ impl Planet {
                 total_prod += BigDecimal::from(recipe.speed)
                     * BigDecimal::from(processor.level)
                     * (BigDecimal::from((1.1 as f64).powf(processor.level.into()))
-                    * BigDecimal::from(processor.user_ratio as f64 / 100.0));
+                        * BigDecimal::from(processor.user_ratio as f64 / 100.0));
             }
         }
 
@@ -310,6 +315,17 @@ impl Planet {
                 .or_insert(BigDecimal::default().with_prec(6)) +=
                 value.produced.with_prec(6).clone() - value.consumed.with_prec(6).clone()
         }
+
+        let science_packs = global_production_context2
+            .entry(3)
+            .or_default();
+
+        Technology::refresh(
+            &self.player_id,
+            science_packs.consumed.clone(),
+            &mut total,
+            conn,
+        );
 
         let mut _processors = vec![];
         for processor in processors {

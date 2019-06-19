@@ -14,5 +14,17 @@
     {
         "id": 3,
         "name": "Science pack"
+    },
+    {
+        "id": 4,
+        "name": "Gear weel"
+    },
+    {
+        "id": 5,
+        "name": "Crystal chunk"
+    },
+    {
+        "id": 6,
+        "name": "Deutherium solution"
     }
 ]
