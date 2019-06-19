@@ -62,11 +62,35 @@ const PlanetProvider = ({ children, client }) => {
 
   const getProcessor = processorId => processors.find(({ id }) => processorId === id);
 
+  // Production Management (TODO: to move)
+  const getMaxProcessorProduction = processorId => {
+    const { level, recipe } = getProcessor(processorId);
+    return recipe.speed * level * 1.1 ** level;
+  };
+
+  const getProcessorProduction = processorId => {
+    const { ratio } = getProcessor(processorId);
+    return getMaxProcessorProduction(processorId) * ratio;
+  };
+
+  const getProcessorsByRecipeId = recipeId =>
+    processors.filter(({ recipe }) => recipe.id === recipeId);
+
+  const getMaxProcessorsProductionByRecipeId = recipeId =>
+    getProcessorsByRecipeId(recipeId)
+      .map(({ id }) => getMaxProcessorProduction(id))
+      .reduce((prev, current) => prev + current);
+
+  const getProcessorsProductionByRecipeId = recipeId =>
+    getProcessorsByRecipeId(recipeId)
+      .map(({ id }) => getProcessorProduction(id))
+      .reduce((prev, current) => prev + current);
+
   // Electricity Management (TODO: to move)
 
   const getMaxProcessorElectricityConsumption = processorId => {
-    const processor = getProcessor(processorId);
-    return (processor.recipe.conso * processor.level * 1.1 ** processor.level).toFixed(1);
+    const { recipe, level } = getProcessor(processorId);
+    return (recipe.conso * level * 1.1 ** level).toFixed(1);
   };
 
   const getProcessorElectricityConsumption = processorId =>
@@ -92,7 +116,23 @@ const PlanetProvider = ({ children, client }) => {
   const getTotalElectricityConsumption = () =>
     Math.floor(getMaxTotalElectricityConsumption() * electricity.currentPercent);
 
-  // Other
+  // Resource Management (TODO: to move)
+
+  const getInventoryItem = inventoryItemId => {
+    return inventory.find(({ id }) => id === inventoryItemId);
+  };
+
+  const getInventoryItemInitialProgress = inventoryItemId =>
+    getInventoryItem(inventoryItemId).currentPercent;
+
+  const getInventoryItemDurationInMs = inventoryItemId =>
+    (1 / getProcessorsProductionByRecipeId(inventoryItemId)) * 3600 * 1000;
+
+  const getInventoryItemRemainingTimeInMs = inventoryItemId => {
+    const percent = getInventoryItemInitialProgress(inventoryItemId);
+    const percentRest = (100 - percent * 100) / 100;
+    return percentRest * getInventoryItemDurationInMs(inventoryItemId);
+  };
 
   const value = {
     state: {
@@ -106,6 +146,7 @@ const PlanetProvider = ({ children, client }) => {
       production,
     },
     dispatch: {
+      getInventoryItemInitialProgress,
       setSelectedBuildingId,
       fetchPlanet,
       fetchCurrentPlanet,
@@ -118,6 +159,10 @@ const PlanetProvider = ({ children, client }) => {
       getTotalElectricityConsumption,
       getTotalElectricityProduction,
       getGeneratorProduction,
+      getMaxProcessorsProductionByRecipeId,
+      getProcessorsProductionByRecipeId,
+      getInventoryItemDurationInMs,
+      getInventoryItemRemainingTimeInMs,
     },
   };
 
