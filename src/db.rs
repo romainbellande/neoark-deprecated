@@ -4,7 +4,7 @@ use rocket::http::Status;
 use rocket::request::{self, FromRequest};
 use rocket::{Outcome, Request, State};
 use std::ops::Deref;
-
+ 
 const DATABASE_URL: &str = env!("DATABASE_URL");
 
 

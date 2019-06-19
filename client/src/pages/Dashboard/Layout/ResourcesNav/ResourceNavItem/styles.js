@@ -5,13 +5,16 @@ export default () => ({
   production: {
     display: 'flex',
     fontSize: '10px',
+    marginLeft: '10px',
     // float: 'left',
-    display: 'flex',
-    justifyContent: "flex-end"
+    // display: 'flex',
+    // justifyContent: "flex-start"
   },
   productionItem: {
-    display: 'flex',
     marginRight: '10px',
+    marginLeft: '10px',
+    display: 'flex',
+    justifyContent: "flex-end"
     // '&:first-child': {
     //   color: green[500],
     // },
