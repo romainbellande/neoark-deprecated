@@ -1,9 +1,27 @@
 import React from 'react';
-import { shape, number, string } from 'prop-types';
+import { shape, number, string, func } from 'prop-types';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 
-function ResourceNavItem({ name, consumed, netAmount, classes }) {
+import ProgressBar from '../../../../../components/ProgressBar';
+
+function ResourceNavItem({
+  id,
+  name,
+  consumed,
+  netAmount,
+  classes,
+  getDurationInMs,
+  getRemainingTimeInMs,
+}) {
+  let duration;
+  let end;
+
+  if (id !== 3) {
+    duration = getDurationInMs(id);
+    end = new Date().getTime() + getRemainingTimeInMs(id);
+  }
+
   return (
     <ListItem className={classes.categoryHeader}>
       <ListItemText
@@ -23,16 +41,20 @@ function ResourceNavItem({ name, consumed, netAmount, classes }) {
             /h)
           </div>
         </div>
+        {id !== 3 && <ProgressBar end={end} duration={duration} onComplete={() => {}} loop />}
       </ListItemText>
     </ListItem>
   );
 }
 
 ResourceNavItem.propTypes = {
+  id: number.isRequired,
   classes: shape({}).isRequired,
   name: string.isRequired,
   consumed: number.isRequired,
   netAmount: number,
+  getDurationInMs: func.isRequired,
+  getRemainingTimeInMs: func.isRequired,
 };
 
 ResourceNavItem.defaultProps = {
