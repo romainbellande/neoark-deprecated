@@ -1,22 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { number, shape, arrayOf, string, func } from 'prop-types';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Fab from '@material-ui/core/Fab';
-import NavigationIcon from '@material-ui/icons/Navigation';
-import Tooltip from '@material-ui/core/Tooltip';
-import { withStyles } from '@material-ui/styles';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
+import Collapse from '@material-ui/core/Collapse';
 import moment from 'moment';
+import classNames from 'classnames';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FilledInput from '@material-ui/core/FilledInput';
+import Select from '@material-ui/core/Select';
+import IconButton from '@material-ui/core/IconButton';
 
-const HtmlTooltip = withStyles(theme => ({
-  tooltip: {
-    backgroundColor: '#f5f5f9',
-    color: 'rgba(0, 0, 0, 0.87)',
-    maxWidth: 220,
-    fontSize: theme.typography.pxToRem(12),
-    border: '1px solid #dadde9',
-  },
-}))(Tooltip);
+import HtmlTooltip from '../../../HtmlTooltip';
+import recipes from '../../../../common/mocks/recipes';
 
 function ProcessorRow({
   id,
@@ -29,8 +32,11 @@ function ProcessorRow({
   onUpgrade,
   upgradeFinish,
   fetchCurrentPlanet,
+  onRecipeChange,
 }) {
   const [updateRemainingTime, setUpdateRemainingTime] = useState(null);
+  const [newRecipe, setNewRecipe] = useState('');
+  const [open, setOpen] = useState(false);
   const intervalTime = 200;
 
   useEffect(() => {
@@ -62,7 +68,7 @@ function ProcessorRow({
     <div>
       {upgradeCosts.map(({ id: costId, name, amount }) => (
         <div key={`cost-item-name-${costId}`}>
-          {name}: {amount}
+          {name}: {amount * level}
         </div>
       ))}
     </div>
@@ -89,7 +95,30 @@ function ProcessorRow({
 
   const onProcessorUpgrade = () => onUpgrade(id);
 
-  return (
+  const getIORecipe = ({ myRecipe, isOutput = true, isElectricityGenerator = false }) =>
+    myRecipe.map(({ id: currentRecipeId, amount }) => {
+      const { name, speed } = recipes.find(({ id: recipeId }) => recipeId === currentRecipeId);
+      const rawRatio = speed * level * level ** 1.1 * amount;
+      const productionPerHour = (isElectricityGenerator ? rawRatio : rawRatio * ratio).toFixed(2);
+      return (
+        <TableRow key={`infos-output-${id}`}>
+          <TableCell>{name}:</TableCell>
+          <TableCell align="right">{isElectricityGenerator ? '/' : amount}</TableCell>
+          <TableCell align="right">
+            <span className={isOutput ? classes.recipeInput : classes.recipeOutput}>
+              {isOutput > 0 ? '+' : '-'}
+              {productionPerHour}
+            </span>
+            /h ({rawRatio.toFixed(2)})
+          </TableCell>
+          <TableCell>{((100 * productionPerHour) / rawRatio).toFixed(2)}%</TableCell>
+        </TableRow>
+      );
+    });
+
+  const isElectricityGenerator = recipe && recipe.id === 3;
+
+  return recipe ? (
     <>
       <TableRow key={id}>
         <TableCell component="th" scope="row">
@@ -100,10 +129,8 @@ function ProcessorRow({
             <span>{recipe.name}</span>
           </HtmlTooltip>
         </TableCell>
-        <TableCell align="right">
-          {(recipe.speed * ratio).toFixed(2)}/h ({recipe.speed})
-        </TableCell>
         <TableCell align="right">{(ratio * 100).toFixed(2)}%</TableCell>
+        <TableCell align="right">{!isElectricityGenerator ? '27/30' : '/'}</TableCell>
         <TableCell align="right">
           {!!updateRemainingTime && upgradeFinish ? (
             <div>{moment(updateRemainingTime, 'x').format('mm:ss')}</div>
@@ -116,17 +143,101 @@ function ProcessorRow({
                 className={classes.margin}
                 onClick={onProcessorUpgrade}
               >
-                <NavigationIcon className={classes.extendedIcon} />
+                <KeyboardArrowUpIcon className={classes.extendedIcon} />
               </Fab>
             </HtmlTooltip>
           )}
         </TableCell>
+        <TableCell>
+          <IconButton
+            color="secondary"
+            // className={clsx(classes.expand, {
+            //   [classes.expandOpen]: expanded,
+            // })}
+            onClick={() => setOpen(prev => !prev)}
+            // aria-expanded={expanded}
+            aria-label="Show more"
+          >
+            {open ? <ExpandLess /> : <ExpandMore />}
+          </IconButton>
+        </TableCell>
+      </TableRow>
+      <TableRow className={classNames({ [classes.rowClosed]: !open })}>
+        <TableCell colSpan={6} padding="none">
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <div className={classes.infos}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell align="right">Amount</TableCell>
+                    <TableCell align="right">Actual Prod/Hour (Max)</TableCell>
+                    <TableCell align="right">Efficiency</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {getIORecipe({ myRecipe: recipe.input }) &&
+                    getIORecipe({
+                      myRecipe: isElectricityGenerator
+                        ? [{ id: recipe.id, amount: recipe.speed }]
+                        : recipe.output,
+                      isElectricityGenerator,
+                      isOutput: true,
+                    })}
+                </TableBody>
+              </Table>
+            </div>
+          </Collapse>
+        </TableCell>
       </TableRow>
     </>
+  ) : (
+    <TableRow>
+      <TableCell component="th" scope="row">
+        {level}
+      </TableCell>
+      <TableCell colSpan={1} align="right">
+        <FormControl variant="filled" className={classes.formControl}>
+          <InputLabel htmlFor="filled-recipe-native-simple">Recipe</InputLabel>
+          <Select
+            native
+            classes={{ select: classes.select }}
+            value={newRecipe}
+            onChange={e => setNewRecipe(e.target.value)}
+            input={<FilledInput name="Recipe" id="filled-recipe-native-simple" />}
+          >
+            <option value={null} />
+            {recipes.map(({ id: recipeId, name }) => (
+              <option value={recipeId}>{name}</option>
+            ))}
+          </Select>
+        </FormControl>
+      </TableCell>
+      <TableCell align="right">/</TableCell>
+      <TableCell align="right">/</TableCell>
+      <TableCell align="right">
+        {!!updateRemainingTime && upgradeFinish ? (
+          <div>{moment(updateRemainingTime, 'x').format('mm:ss')}</div>
+        ) : (
+          <Fab
+            size="small"
+            color="primary"
+            aria-label="Add"
+            className={classes.margin}
+            disabled={newRecipe === ''}
+            onClick={() => onRecipeChange(id, newRecipe)}
+          >
+            <KeyboardArrowUpIcon className={classes.extendedIcon} />
+          </Fab>
+        )}
+      </TableCell>
+      <TableCell align="right">/</TableCell>
+    </TableRow>
   );
 }
 
 ProcessorRow.propTypes = {
+  onRecipeChange: func.isRequired,
   items: arrayOf(shape({})).isRequired,
   fetchCurrentPlanet: func.isRequired,
   upgradeFinish: func,

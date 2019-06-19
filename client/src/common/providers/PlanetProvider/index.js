@@ -1,5 +1,5 @@
 import PlanetProvider, { withPlanetContext } from './PlanetProvider';
-import { withApiContext } from '../../../common/providers/ApiProvider';
+import { withApiContext } from '../ApiProvider';
 
 export { withPlanetContext };
 export default withApiContext(({ client }) => ({ client }))(PlanetProvider);

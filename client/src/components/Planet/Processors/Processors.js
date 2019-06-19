@@ -6,25 +6,29 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import BatteryChargingFullIcon from '@material-ui/icons/BatteryChargingFull';
 
 import ProcessorRow from './ProcessorRow';
 
-function Processors({ processors, resources, items, classes }) {
+function Processors({ processors, items }) {
   return (
-    <Paper >
+    <Paper>
       <Table>
         <TableHead>
           <TableRow>
             <TableCell>Level</TableCell>
-            <TableCell align="right">Name</TableCell>
-            <TableCell align="right">Actual Prod/Hour (Max)</TableCell>
+            <TableCell align="right">Recipe</TableCell>
             <TableCell align="right">Ratio</TableCell>
+            <TableCell align="right">
+              <BatteryChargingFullIcon />
+            </TableCell>
             <TableCell align="right">Upgrade</TableCell>
+            <TableCell align="right">Details</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {processors.map(processor => (
-            <ProcessorRow key={`proc-row-${processor.id}`} {...processor} resources={resources} items={items} />
+            <ProcessorRow key={`proc-row-${processor.id}`} {...processor} items={items} />
           ))}
         </TableBody>
       </Table>
@@ -33,7 +37,7 @@ function Processors({ processors, resources, items, classes }) {
 }
 
 Processors.propTypes = {
-  classes: shape({}).isRequired,
+  items: arrayOf(shape({})).isRequired,
   processors: arrayOf(
     shape({
       id: number.isRequired,
