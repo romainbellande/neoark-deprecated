@@ -33,6 +33,7 @@ table! {
         level -> Int4,
         upgrade_finish -> Nullable<Timestamp>,
         ratio -> Numeric,
+        user_ratio -> Int4,
         recipe -> Int4,
     }
 }

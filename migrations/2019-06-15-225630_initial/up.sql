@@ -34,10 +34,11 @@ CREATE TABLE processors (
     level INTEGER NOT NULL,
     upgrade_finish TIMESTAMP NULL,
     ratio DECIMAL(15, 6) NOT NULL,
+    user_ratio INTEGER NOT NULL,
     recipe INTEGER NOT NULL
 );
 
-INSERT INTO processors (player_id, planet_id, level, upgrade_finish, ratio, recipe) VALUES (1, 1, 1, NULL, 1.0, 0);
-INSERT INTO processors (player_id, planet_id, level, upgrade_finish, ratio, recipe) VALUES (1, 1, 1, NULL, 1.0, 1);
-INSERT INTO processors (player_id, planet_id, level, upgrade_finish, ratio, recipe) VALUES (1, 1, 1, NULL, 1.0, 2);
-INSERT INTO processors (player_id, planet_id, level, upgrade_finish, ratio, recipe) VALUES (1, 1, 1, NULL, 1.0, 3);
+INSERT INTO processors (player_id, planet_id, level, upgrade_finish, ratio, user_ratio, recipe) VALUES (1, 1, 1, NULL, 1.0, 100, 0);
+INSERT INTO processors (player_id, planet_id, level, upgrade_finish, ratio, user_ratio, recipe) VALUES (1, 1, 1, NULL, 1.0, 100, 1);
+INSERT INTO processors (player_id, planet_id, level, upgrade_finish, ratio, user_ratio, recipe) VALUES (1, 1, 1, NULL, 1.0, 100, 2);
+INSERT INTO processors (player_id, planet_id, level, upgrade_finish, ratio, user_ratio, recipe) VALUES (1, 1, 1, NULL, 1.0, 100, 3);

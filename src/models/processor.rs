@@ -1,11 +1,14 @@
 use bigdecimal::{BigDecimal, ToPrimitive};
 use diesel::prelude::*;
+use std::collections::HashMap;
 use std::ops::Add;
 use std::time::{Duration, SystemTime};
 
 use super::inventory::*;
 use super::schema;
 use super::schema::processors;
+
+const dev_mode: bool = true;
 
 #[model]
 pub struct Processor {
@@ -14,6 +17,7 @@ pub struct Processor {
     pub level: i32,
     pub upgrade_finish: Option<SystemTime>,
     pub ratio: BigDecimal,
+    pub user_ratio: i32,
     pub recipe: i32,
 }
 
@@ -26,6 +30,7 @@ impl Processor {
             level: 0,
             upgrade_finish: None,
             ratio: BigDecimal::from(1.0),
+            user_ratio: 100,
             recipe: -1,
         }
     }
@@ -54,6 +59,23 @@ impl Processor {
             .unwrap()
     }
 
+    pub fn get_build_time(cost: &HashMap<i32, BigDecimal>) -> Duration {
+        if dev_mode {
+            Duration::from_secs(10)
+        } else {
+            let metal = cost.get(&0).unwrap();
+            let crystal = cost.get(&1).unwrap();
+
+            let total = metal + crystal;
+
+            Duration::from_secs(
+                ((total / BigDecimal::from(2500)) * BigDecimal::from(60) * BigDecimal::from(60))
+                    .to_u64()
+                    .unwrap(),
+            )
+        }
+    }
+
     pub fn schedule_upgrade(&mut self, conn: &diesel::PgConnection) -> Result<Processor, String> {
         if Self::list_upgrading_by_planet(&self.planet_id, conn).len() != 0 {
             return Err("A building is already upgrading".to_string());
@@ -69,12 +91,9 @@ impl Processor {
             return Err("Not enough".to_string());
         }
 
-        let build_time = {
-            let metal = cost.get(&0).unwrap().to_u64().unwrap();
-            let crystal = cost.get(&0).unwrap().to_u64().unwrap();
+        let build_time = Self::get_build_time(&cost);
 
-            Duration::from_secs((metal + crystal) / (2500) * 60 * 60)
-        };
+        println!("UPGRADE {:?} {:?}", build_time, cost);
 
         self.upgrade_finish = Some(SystemTime::now().add(build_time));
 
@@ -100,12 +119,7 @@ impl Processor {
 
         let mut processor = Processor::new(inventory.player_id, *planet_id);
 
-        let build_time = {
-            let metal = cost.get(&0).unwrap().to_u64().unwrap();
-            let crystal = cost.get(&0).unwrap().to_u64().unwrap();
-
-            Duration::from_secs((metal + crystal) / (2500) * 60 * 60)
-        };
+        let build_time = Self::get_build_time(&cost);
 
         processor.upgrade_finish = Some(SystemTime::now().add(build_time));
 

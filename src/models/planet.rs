@@ -96,7 +96,7 @@ impl Planet {
         for _processor in processors {
             let mut processor = _processor.borrow_mut();
 
-            if processor.recipe < 0 || processor.upgrade_finish.is_some() {
+            if processor.recipe < 0 || processor.upgrade_finish.is_some() || processor.user_ratio == 0 {
                 continue;
             }
             let ratio = if use_processor_ratio {
@@ -121,7 +121,8 @@ impl Planet {
                         * BigDecimal::from((1.1 as f64).powf(processor.level.into())))
                     * to_consume.amount.clone()
                     * ratio.clone()
-                    * elec_ratio.clone();
+                    * elec_ratio.clone()
+                    * BigDecimal::from(processor.user_ratio as f64 / 100.0);
 
                 entry.attached_processors.push(_processor.clone())
             }
@@ -137,12 +138,14 @@ impl Planet {
                         * BigDecimal::from((1.1 as f64).powf(processor.level.into())))
                     * to_produce.amount.clone()
                     * ratio.clone()
-                    * elec_ratio.clone();
+                    * elec_ratio.clone()
+                    * BigDecimal::from(processor.user_ratio as f64 / 100.0);
+
             }
 
             // if not generator
             if processor.recipe != 3 && use_processor_ratio == true {
-                processor.ratio = (ratio.clone() * elec_ratio.clone()).with_prec(6);
+                processor.ratio = (ratio.clone() * elec_ratio.clone() * BigDecimal::from(processor.user_ratio as f64 / 100.0)).with_prec(6);
             }
         }
 
@@ -164,13 +167,15 @@ impl Planet {
 
             total_conso += BigDecimal::from(recipe.conso)
                 * BigDecimal::from(processor.level)
-                * BigDecimal::from((1.1 as f64).powf(processor.level.into()));
+                * BigDecimal::from((1.1 as f64).powf(processor.level.into()))
+                * BigDecimal::from(processor.user_ratio as f64 / 100.0);
 
             // if it is a generator
             if processor.recipe == 3 {
                 total_prod += BigDecimal::from(recipe.speed)
                     * BigDecimal::from(processor.level)
-                    * (BigDecimal::from((1.1 as f64).powf(processor.level.into())));
+                    * (BigDecimal::from((1.1 as f64).powf(processor.level.into()))
+                    * BigDecimal::from(processor.user_ratio as f64 / 100.0));
             }
         }
 
@@ -225,7 +230,7 @@ impl Planet {
                     is_building = Some(shared.clone());
                 }
             } else {
-                shared.borrow_mut().ratio = BigDecimal::from(1.0).with_prec(6);
+                shared.borrow_mut().ratio = BigDecimal::from(processor.user_ratio as f64 / 100.0);
             }
             processors.push(shared);
         }

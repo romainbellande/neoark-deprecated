@@ -198,6 +198,55 @@ fn set_recipe_error(_processor_id: i32, _recipe: i32) -> Json<JsonValue> {
     ))
 }
 
+#[put("/<processor_id>/set_ratio/<ratio>")]
+fn set_ratio(
+    key: ApiKey,
+    processor_id: i32,
+    ratio: i32,
+    connection: db::Connection,
+) -> Result<Json<Processor>, NotFound<String>> {
+    if ratio < 0 || ratio > 100 || ratio % 10 != 0 {
+        return Err(NotFound("Bad ratio".to_string()));
+    }
+
+    let player = Player::fetch_by_email(key.0, &connection);
+
+    if player.is_none() {
+        return Err(NotFound("Player not found".to_string()));
+    }
+
+
+    let processor = Processor::fetch(processor_id, &connection);
+
+    if processor.is_none() {
+        return Err(NotFound("Processor not found".to_string()));
+    }
+
+    let mut processor = processor.unwrap();
+
+    let _ = Planet::refresh_for(processor.planet_id, &connection);
+
+    if let Some(_) = processor.upgrade_finish {
+        return Err(NotFound("Processor is upgrading".to_string()));
+    }
+
+    processor.user_ratio = ratio;
+
+    processor.save(&connection);
+
+    Ok(Json(processor))
+}
+
+#[put("/<_processor_id>/set_ratio/<_ratio>", rank = 2)]
+fn set_ratio_error(_processor_id: i32, _ratio: i32) -> Json<JsonValue> {
+    Json(json!(
+        {
+            "success": false,
+            "message": "Not authorized"
+        }
+    ))
+}
+
 pub fn mount() -> Vec<Route> {
     routes![
         get,
@@ -210,5 +259,7 @@ pub fn mount() -> Vec<Route> {
         new_error,
         set_recipe,
         set_recipe_error,
+        set_ratio,
+        set_ratio_error,
     ]
 }
