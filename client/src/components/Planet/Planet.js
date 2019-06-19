@@ -3,6 +3,7 @@ import { shape, func, arrayOf } from 'prop-types';
 
 import items from '../../common/mocks/items';
 import Processors from './Processors';
+import Buildings from './Buildings';
 
 const Planet = ({ match, fetchPlanet, production, inventory, planet, processors }) => {
   const [isPlanetLoaded, setIsPlanetLoaded] = useState(false);
@@ -40,6 +41,7 @@ const Planet = ({ match, fetchPlanet, production, inventory, planet, processors 
   return (
     isPlanetLoaded && (
       <div>
+        <Buildings />
         <Processors processors={processors} resources={resources} items={items} />
       </div>
     )

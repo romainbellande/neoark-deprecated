@@ -6,9 +6,10 @@ import styles from './styles';
 import { withPlanetContext } from '../../../../common/providers/PlanetProvider';
 
 export default _.flow([
-  withPlanetContext(null, ({ upgradeProcessor, fetchCurrentPlanet }) => ({
+  withPlanetContext(null, ({ upgradeProcessor, fetchCurrentPlanet, changeProcessorRecipe }) => ({
     onUpgrade: upgradeProcessor,
     fetchCurrentPlanet,
+    onRecipeChange: changeProcessorRecipe,
   })),
   withStyles(styles),
 ])(ProcessorRow);

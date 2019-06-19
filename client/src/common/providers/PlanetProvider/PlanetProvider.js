@@ -10,8 +10,22 @@ export const PlanetContext = createContext();
 export const withPlanetContext = withContextFactory(PlanetContext);
 
 const PlanetProvider = ({ children, client }) => {
+  const formattedBuildingConfigurationsMock = buildingConfigurationssMock.map(
+    ({ id, name, level_multiplier: levelMultiplier, energy_cost: energyCost, costs }) => ({
+      id,
+      name,
+      levelMultiplier,
+      energyCost,
+      costs: costs.map(({ id: costId, amount }) => ({
+        id: costId,
+        amount,
+        name: recipes.find(({ id: recipeId }) => recipeId === costId).name,
+      })),
+    })
+  );
+
   const [selectedBuildingId, setSelectedBuildingId] = useState(null);
-  const [buildingConfigurations] = useState(buildingConfigurationssMock);
+  const [buildingConfigurations] = useState(formattedBuildingConfigurationsMock);
   const [buildings] = useState(buildingsMock);
   const [inventory, setInventory] = useState(null);
   const [planet, setPlanet] = useState(null);
@@ -83,13 +97,15 @@ const PlanetProvider = ({ children, client }) => {
         ratio: parseFloat(ratio),
         upgradeFinish: upgradeFinish ? upgradeFinish.secs_since_epoch * 1000 : null,
         upgradeCosts,
-        recipe: {
-          id: recipeItem.id,
-          name: recipeItem.name,
-          speed: recipeItem.speed,
-          input: recipeItem.i,
-          output: recipeItem.o,
-        },
+        recipe: recipeItem
+          ? {
+              id: recipeItem.id,
+              name: recipeItem.name,
+              speed: recipeItem.speed,
+              input: recipeItem.i,
+              output: recipeItem.o,
+            }
+          : null,
       };
     });
   };
@@ -114,6 +130,16 @@ const PlanetProvider = ({ children, client }) => {
     await fetchCurrentPlanet();
   };
 
+  const buyProcessor = async () => {
+    await client.post(`/processors/${planet.id}`);
+    await fetchCurrentPlanet();
+  };
+
+  const changeProcessorRecipe = async (processorId, recipeId) => {
+    await client.put(`/processors/${processorId}/set_recipe/${recipeId}`);
+    await fetchCurrentPlanet();
+  };
+
   const value = {
     state: {
       electricity,
@@ -130,6 +156,8 @@ const PlanetProvider = ({ children, client }) => {
       fetchPlanet,
       fetchCurrentPlanet,
       upgradeProcessor,
+      buyProcessor,
+      changeProcessorRecipe,
     },
   };
 

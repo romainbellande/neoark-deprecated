@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { shape, func, string } from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Grid from '@material-ui/core/Grid';
@@ -39,11 +39,6 @@ const styles = theme => ({
 
 const Header = props => {
   const { classes, onDrawerToggle, planetName } = props;
-  const [tabValue, setTabValue] = useState(0);
-
-  const handleTabsChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
 
   return (
     <React.Fragment>
@@ -67,67 +62,9 @@ const Header = props => {
                 {planetName}
               </Typography>
             </Grid>
-
-            {/* <Grid item>
-              <Typography className={classes.link} component="a" href="#">
-                Go to docs
-              </Typography>
-            </Grid>
-            <Grid item>
-              <Tooltip title="Alerts • No alters">
-                <IconButton color="inherit">
-                  <NotificationsIcon />
-                </IconButton>
-              </Tooltip>
-            </Grid> */}
-            {/* <Grid item>
-              <IconButton color="inherit" className={classes.iconButtonAvatar}>
-                <Avatar
-                  className={classes.avatar}
-                  src="/static/images/avatar/1.jpg"
-                  alt="My Avatar"
-                />
-              </IconButton>
-            </Grid> */}
           </Grid>
         </Toolbar>
       </AppBar>
-      <AppBar component="div" className={classes.secondaryBar} position="static" elevation={0}>
-        {/* <Toolbar> */}
-        {/* <Grid container alignItems="center" spacing={1}> */}
-        {/* <Grid item xs>
-              <ResourcesBar />
-            </Grid> */}
-
-        {/* <Grid item>
-              <Button className={classes.button} variant="outlined" color="inherit" size="small">
-                Web setup
-              </Button>
-            </Grid>
-            <Grid item>
-              <Tooltip title="Help">
-                <IconButton color="inherit">
-                  <HelpIcon />
-                </IconButton>
-              </Tooltip>
-            </Grid> */}
-        {/* </Grid> */}
-        {/* </Toolbar> */}
-      </AppBar>
-      {/* <AppBar
-        component="div"
-        className={classes.secondaryBar}
-        color="primary"
-        position="static"
-        elevation={0}
-      >
-        <Tabs value={tabValue} textColor="inherit" onChange={handleTabsChange}>
-          <Tab textColor="inherit" label="Users" />
-          <Tab textColor="inherit" label="Sign-in method" />
-          <Tab textColor="inherit" label="Templates" />
-          <Tab textColor="inherit" label="Usage" />
-        </Tabs>
-      </AppBar> */}
     </React.Fragment>
   );
 };
