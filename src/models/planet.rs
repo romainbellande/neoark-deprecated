@@ -145,8 +145,7 @@ impl Planet {
                     * BigDecimal::from(processor.user_ratio as f64 / 100.0);
             }
 
-            // if not generator
-            if processor.recipe != 3 && use_processor_ratio == true {
+            if processor.recipe != 3  && use_processor_ratio == true {
                 processor.ratio = (ratio.clone()
                     * elec_ratio.clone()
                     * BigDecimal::from(processor.user_ratio as f64 / 100.0))
@@ -262,6 +261,8 @@ impl Planet {
 
         let mut prod_res = HashMap::new();
 
+        let technologies = Technology::fetch_by_planet(&self.id, conn).unwrap();
+
         for (_, value) in global_production_context.iter_mut() {
             value.ratio = BigDecimal::from(1.0).with_prec(6);
 
@@ -289,6 +290,7 @@ impl Planet {
                     guard.ratio = value.ratio.with_prec(6).clone();
                     guard.save(conn);
                 }
+
             }
             prod_res.insert(
                 value.id.clone(),
@@ -303,7 +305,16 @@ impl Planet {
             true,
         );
 
+        let technologies = Technology::fetch_by_planet(&self.id, conn).unwrap();
+
+
+
         for (key, value) in global_production_context2.iter_mut() {
+            // science_pack
+            if *key == 3 && technologies.current_research == -1 {
+                value.consumed = BigDecimal::zero();
+            } 
+
             value.rate = (value.produced.clone() - value.consumed.clone()) / elapsed.clone();
 
             value.rate = value.rate.with_prec(6);
