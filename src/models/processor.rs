@@ -61,13 +61,22 @@ impl Processor {
 
         let mut inventory = Inventory::fetch_by_planet(&self.planet_id, conn).unwrap();
 
-        let has_bought = inventory.buy(&Inventory::cost_of(&0, self.level + 1), conn);
+        let cost = Inventory::cost_of(&0, self.level + 1);
+
+        let has_bought = inventory.buy(&cost, conn);
 
         if !has_bought {
             return Err("Not enough".to_string());
         }
 
-        self.upgrade_finish = Some(SystemTime::now().add(Duration::from_secs(10)));
+        let build_time = {
+            let metal = cost.get(&0).unwrap().to_u64().unwrap();
+            let crystal = cost.get(&0).unwrap().to_u64().unwrap();
+
+            Duration::from_secs((metal + crystal) / (2500) * 60 * 60)
+        };
+
+        self.upgrade_finish = Some(SystemTime::now().add(build_time));
 
         self.save(conn);
 

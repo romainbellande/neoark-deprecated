@@ -25,7 +25,7 @@ CREATE TABLE inventories (
     last_update TIMESTAMP NOT NULL
 );
 
-INSERT INTO inventories (player_id, planet_id, items, last_update) VALUES (1, 1, '{"0":1000,"1":1000}', NOW());
+INSERT INTO inventories (player_id, planet_id, items, last_update) VALUES (1, 1, '{"0":10000,"1":10000}', NOW());
 
 CREATE TABLE processors (
     id SERIAL PRIMARY KEY,

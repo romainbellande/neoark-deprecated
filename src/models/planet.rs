@@ -148,7 +148,7 @@ impl Planet {
 
         global_production_context
     }
-    // -> ((produced, consumed), ratio)
+
     pub fn calc_electric_ratio(
         processors: &Vec<Processor>,
         inventory_items: &HashMap<i32, BigDecimal>,
@@ -170,7 +170,7 @@ impl Planet {
             if processor.recipe == 3 {
                 total_prod += BigDecimal::from(recipe.speed)
                     * BigDecimal::from(processor.level)
-                    * (BigDecimal::from((0.9 as f64).powf(processor.level.into())));
+                    * (BigDecimal::from((1.1 as f64).powf(processor.level.into())));
             }
         }
 
@@ -255,10 +255,13 @@ impl Planet {
         for (_, value) in global_production_context.iter_mut() {
             value.ratio = BigDecimal::from(1.0).with_prec(6);
 
-            let inventory_total = total.entry(value.id).or_insert(BigDecimal::zero().with_prec(6));
+            let inventory_total = total
+                .entry(value.id)
+                .or_insert(BigDecimal::zero().with_prec(6));
 
             if value.consumed > (value.produced.clone() + inventory_total.clone()) {
-                value.ratio = (value.produced.clone()+ inventory_total.clone()) / value.consumed.clone();
+                value.ratio =
+                    (value.produced.clone() + inventory_total.clone()) / value.consumed.clone();
             }
 
             value.ratio = value.ratio.with_prec(6);

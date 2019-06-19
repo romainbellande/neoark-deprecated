@@ -5,6 +5,7 @@ import withContextFactory from '../../helpers/with-context-factory';
 import buildingConfigurationssMock from '../../mocks/building-configurations';
 import buildingsMock from '../../mocks/buildings';
 import recipes from '../../mocks/recipes.json';
+import items from '../../mocks/items.json';
 
 export const PlanetContext = createContext();
 export const withPlanetContext = withContextFactory(PlanetContext);
@@ -48,7 +49,7 @@ const PlanetProvider = ({ children, client }) => {
         producedRate = currentProduction.producing_rate;
       }
 
-      const { name } = recipes.find(item => item.id === id);
+      const { name } = items.find(item => item.id === id);
 
       return {
         id,
@@ -66,7 +67,7 @@ const PlanetProvider = ({ children, client }) => {
     const id = 3;
     const { produced, consumed, ratio } = myElectricity;
     const recipe = myRecipes.find(item => item.id === id);
-    const { name } = recipe;
+    const name = 'Electricity';
 
     return {
       id,
