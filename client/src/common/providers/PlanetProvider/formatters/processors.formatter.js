@@ -13,7 +13,10 @@ const processorsFormatter = (processors, recipes, buildingConfigurations) => {
       id,
       level,
       ratio: parseFloat(ratio),
-      upgradeFinish: upgradeFinish ? upgradeFinish.secs_since_epoch * 1000 : null,
+      upgradeFinish: upgradeFinish
+        ? upgradeFinish.secs_since_epoch * 1000 +
+          Math.ceil(upgradeFinish.nanos_since_epoch / 10 ** 6)
+        : null,
       upgradeCosts,
       recipe: recipeItem
         ? {
