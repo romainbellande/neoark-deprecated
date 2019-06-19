@@ -8,7 +8,7 @@ import { shape, func, oneOfType, string, number, arrayOf } from 'prop-types';
 const AppSelect = ({ classes, onChange, value, options, label }) => {
   return (
     <FormControl variant="filled" className={classes.formControl}>
-      <InputLabel htmlFor="filled-recipe-native-simple">Recipe</InputLabel>
+      <InputLabel htmlFor="filled-recipe-native-simple"></InputLabel>
       <Select
         native
         classes={{ select: classes.select }}
@@ -16,7 +16,7 @@ const AppSelect = ({ classes, onChange, value, options, label }) => {
         onChange={onChange}
         input={<FilledInput name={label} id="filled-recipe-native-simple" />}
       >
-        <option value={null} />
+        <option value={-1} />
         {options.map(({ value: optionValue, name }) => (
           <option key={`option-${name}`} value={optionValue}>
             {name}

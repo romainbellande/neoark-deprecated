@@ -48,7 +48,7 @@ function ProcessorRow({
   );
 
   const onProductRecipeChange = e => {
-    const myNewRecipe = e.target.value;
+    const myNewRecipe = e.target.value || -1;
     setNewRecipe(myNewRecipe);
     onRecipeChange(id, myNewRecipe);
   };

@@ -59,3 +59,8 @@ table {
 .MuiFab-primary {
    background-color: #393939 !important;
 }
+
+select {
+  padding-top: 3px !important;
+  padding-bottom: 3px !important;
+}

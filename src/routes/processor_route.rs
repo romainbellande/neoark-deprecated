@@ -163,7 +163,6 @@ fn set_recipe(
         return Err(NotFound("Player not found".to_string()));
     }
 
-
     let processor = Processor::fetch(processor_id, &connection);
 
     if processor.is_none() {
@@ -176,6 +175,14 @@ fn set_recipe(
 
     if let Some(_) = processor.upgrade_finish {
         return Err(NotFound("Processor is upgrading".to_string()));
+    }
+
+    if recipe == -1 {
+        processor.recipe = recipe;
+
+        processor.save(&connection);
+
+        return Ok(Json(processor))
     }
 
     match &RECIPES.get(&recipe) {

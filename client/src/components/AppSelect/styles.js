@@ -1,7 +1,7 @@
 export default () => ({
   select: {
     backgroundColor: 'white',
-    borderRadius: '5px',
+    borderRadius: '3px',
     paddingLeft: '30px',
     paddingRight: '30px',
     '&:focus': {
