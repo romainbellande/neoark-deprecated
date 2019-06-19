@@ -26,10 +26,15 @@ const PlanetProvider = ({ children, client }) => {
       const netAmount = Math.floor(amount);
       const currentPercent = Math.abs(amount - netAmount);
       const currentProduction = myProduction[id];
-      const { actual_rate: actualRate, producing_rate: producingRate } = currentProduction;
-      // console.log('recipes', recipes, id, recipes.find(item => item.id == id));
+      let actualRate = 0;
+      let producedRate = 0;
+
+      if (currentProduction) {
+        actualRate = currentProduction.actual_rate;
+        producedRate = currentProduction.producing_rate;
+      }
+
       const { name } = recipes.find(item => item.id === id);
-      // console.log('name', recipe)
 
       return {
         id,
@@ -37,9 +42,9 @@ const PlanetProvider = ({ children, client }) => {
         netAmount,
         currentPercent,
         consumed: parseFloat(actualRate).toFixed(2),
-        produced: parseFloat(producingRate).toFixed(2),
+        produced: parseFloat(producedRate).toFixed(2),
         consumedRate: parseFloat(actualRate).toFixed(2),
-        producedTate: parseFloat(producingRate).toFixed(2),
+        producedTate: parseFloat(producedRate).toFixed(2),
       };
     });
 
@@ -76,7 +81,7 @@ const PlanetProvider = ({ children, client }) => {
         id,
         level,
         ratio: parseFloat(ratio),
-        upgradeFinish,
+        upgradeFinish: upgradeFinish ? upgradeFinish.secs_since_epoch * 1000 : null,
         upgradeCosts,
         recipe: {
           id: recipeItem.id,
@@ -102,6 +107,13 @@ const PlanetProvider = ({ children, client }) => {
     return data;
   };
 
+  const fetchCurrentPlanet = () => fetchPlanet(planet.id);
+
+  const upgradeProcessor = async id => {
+    await client.put(`/processors/${id}/upgrade`);
+    await fetchCurrentPlanet();
+  };
+
   const value = {
     state: {
       electricity,
@@ -116,6 +128,8 @@ const PlanetProvider = ({ children, client }) => {
     dispatch: {
       setSelectedBuildingId,
       fetchPlanet,
+      fetchCurrentPlanet,
+      upgradeProcessor,
     },
   };
 

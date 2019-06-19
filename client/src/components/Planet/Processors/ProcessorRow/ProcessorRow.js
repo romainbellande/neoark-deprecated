@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { number, shape, arrayOf, string } from 'prop-types';
+import React, { useState, useEffect } from 'react';
+import { number, shape, arrayOf, string, func } from 'prop-types';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Fab from '@material-ui/core/Fab';
 import NavigationIcon from '@material-ui/icons/Navigation';
-import moment from 'moment';
 import Tooltip from '@material-ui/core/Tooltip';
 import { withStyles } from '@material-ui/styles';
-
-import useInterval from '../../../../common/helpers/use-interval';
+import moment from 'moment';
 
 const HtmlTooltip = withStyles(theme => ({
   tooltip: {
@@ -20,58 +18,45 @@ const HtmlTooltip = withStyles(theme => ({
   },
 }))(Tooltip);
 
-const getRemainingTime = (totalMS, percent) => {
-  const time = totalMS - percent / totalMS;
-  return time;
-};
-
 function ProcessorRow({
   id,
   recipe,
   level,
   ratio,
-  resources,
   items,
   classes,
   upgradeCosts,
-  startPercents,
+  onUpgrade,
+  upgradeFinish,
+  fetchCurrentPlanet,
 }) {
-  if (recipe.id >= 0 && resources[recipe.id] != null) {
-    const amount = resources[recipe.id].value;
-    startPercents = (amount - Math.floor(amount)) * 100;
-  }
-
-  console.log('upgradeCosts', upgradeCosts);
-
-  let totalDurationInMS = (1 / recipe.speed) * 3600 * 1000;
-  totalDurationInMS -= (startPercents / 100) * totalDurationInMS;
-
-  const [remainingTime, setRemainingTime] = useState(totalDurationInMS);
-  const [completed, setCompleted] = React.useState(startPercents);
-
-  useInterval(() => {
-    setRemainingTime(remainingTime - 1000);
-  }, 1000);
+  const [updateRemainingTime, setUpdateRemainingTime] = useState(null);
+  const intervalTime = 200;
 
   useEffect(() => {
-    function progress() {
-      setCompleted(oldCompleted => {
-        if (oldCompleted === 100) {
-          return 0;
-        }
-        const percent = oldCompleted + recipe.speed / 3600;
-        // console.log('Math.min(oldCompleted + diff, 100)', Math.min(oldCompleted + diff, 100))
-        return percent;
-      });
-    }
+    const progress = () => {
+      if (upgradeFinish !== null) {
+        setUpdateRemainingTime(prevValue => {
+          if (prevValue === null) {
+            return upgradeFinish - new Date().getTime();
+          }
 
-    const timer = setInterval(progress, 100);
+          if (prevValue <= 0) {
+            fetchCurrentPlanet();
+            return 0;
+          }
+
+          return prevValue - intervalTime;
+        });
+      }
+    };
+
+    const timer = setInterval(progress, intervalTime);
+
     return () => {
       clearInterval(timer);
     };
-  }, []);
-
-  const remainingTimeFormatted = moment(remainingTime).format('mm:ss');
+  }, [upgradeFinish]);
 
   const getUpgradeTooltipText = () => (
     <div>
@@ -83,20 +68,26 @@ function ProcessorRow({
     </div>
   );
 
-  const getRecipeTooltipText = (recipe) => (
+  const getRecipeTooltipText = myRecipe => (
     <div style={{ display: 'flex' }}>
       <span>
-        {recipe.input.map(item => (
-          <div>{items[item.id].name}: {item.amount}</div>
+        {myRecipe.input.map(item => (
+          <div key={`input-${item.id}`}>
+            {items[item.id].name}: {item.amount}
+          </div>
         ))}
       </span>
       <span>
-        {recipe.output.map(item => (
-          <div>{items[item.id].name}: {item.amount}</div>
+        {myRecipe.output.map(item => (
+          <div key={`output-${item.id}`}>
+            {items[item.id].name}: {item.amount}
+          </div>
         ))}
       </span>
     </div>
   );
+
+  const onProcessorUpgrade = () => onUpgrade(id);
 
   return (
     <>
@@ -106,9 +97,7 @@ function ProcessorRow({
         </TableCell>
         <TableCell align="right">
           <HtmlTooltip title={getRecipeTooltipText(recipe)}>
-            <span>
-              {recipe.name}
-            </span>
+            <span>{recipe.name}</span>
           </HtmlTooltip>
         </TableCell>
         <TableCell align="right">
@@ -116,11 +105,21 @@ function ProcessorRow({
         </TableCell>
         <TableCell align="right">{(ratio * 100).toFixed(2)}%</TableCell>
         <TableCell align="right">
-          <HtmlTooltip title={getUpgradeTooltipText()}>
-            <Fab size="small" color="primary" aria-label="Add" className={classes.margin}>
-              <NavigationIcon className={classes.extendedIcon} />
-            </Fab>
-          </HtmlTooltip>
+          {!!updateRemainingTime && upgradeFinish ? (
+            <div>{moment(updateRemainingTime, 'x').format('mm:ss')}</div>
+          ) : (
+            <HtmlTooltip title={getUpgradeTooltipText()}>
+              <Fab
+                size="small"
+                color="primary"
+                aria-label="Add"
+                className={classes.margin}
+                onClick={onProcessorUpgrade}
+              >
+                <NavigationIcon className={classes.extendedIcon} />
+              </Fab>
+            </HtmlTooltip>
+          )}
         </TableCell>
       </TableRow>
     </>
@@ -128,7 +127,17 @@ function ProcessorRow({
 }
 
 ProcessorRow.propTypes = {
-  upgradeCosts: shape({}).isRequired,
+  items: arrayOf(shape({})).isRequired,
+  fetchCurrentPlanet: func.isRequired,
+  upgradeFinish: func,
+  onUpgrade: func.isRequired,
+  upgradeCosts: arrayOf(
+    shape({
+      id: number.isRequired,
+      name: string.isRequired,
+      amount: number.isRequired,
+    })
+  ).isRequired,
   classes: shape({}).isRequired,
   id: number.isRequired,
   level: number.isRequired,
@@ -150,6 +159,10 @@ ProcessorRow.propTypes = {
       })
     ).isRequired,
   }).isRequired,
+};
+
+ProcessorRow.defaultProps = {
+  upgradeFinish: null,
 };
 
 export default ProcessorRow;
