@@ -4,6 +4,7 @@
     "name": "Metal processing",
     "speed": 30,
     "conso": 10,
+    "deps": [],
     "i": [],
     "o": [
       {
@@ -17,6 +18,7 @@
     "name": "Crystal processing",
     "speed": 20,
     "conso": 10,
+    "deps": [],
     "i": [],
     "o": [
       {
@@ -30,6 +32,7 @@
     "name": "Deutherium processing",
     "speed": 10,
     "conso": 10,
+    "deps": [],
     "i": [],
     "o": [
       {
@@ -43,6 +46,7 @@
     "name": "Electricity Generator",
     "speed": 30,
     "conso": 0,
+    "deps": [],
     "i": [],
     "o": []
   },
@@ -51,6 +55,7 @@
     "name": "Science pack",
     "speed": 1,
     "conso": 100,
+    "deps": [],
     "i": [
       {
         "id": 4,
@@ -77,6 +82,7 @@
     "name": "Gear weel",
     "speed": 10,
     "conso": 40,
+    "deps": [],
     "i": [
       {
         "id": 0,
@@ -95,6 +101,7 @@
     "name": "Crystal chunk",
     "speed": 8,
     "conso": 45,
+    "deps": [],
     "i": [
       {
         "id": 1,
@@ -113,6 +120,7 @@
     "name": "Deutherium solution",
     "speed": 4,
     "conso": 55,
+    "deps": [],
     "i": [
       {
         "id": 2,
@@ -131,6 +139,7 @@
     "name": "Research Lab",
     "speed": 1000,
     "conso": 100,
+    "deps": [],
     "i": [
       {
         "id": 3,
@@ -138,5 +147,26 @@
       }
     ],
     "o": []
+  },
+  {
+    "id": 9,
+    "name": "Small transporter",
+    "speed": 1,
+    "conso": 100,
+    "deps": [
+      2
+    ],
+    "i": [
+      {
+        "id": 0,
+        "amount": 100
+      }
+    ],
+    "o": [
+      {
+        "id": 0,
+        "amount": 100
+      }
+    ]
   }
 ]

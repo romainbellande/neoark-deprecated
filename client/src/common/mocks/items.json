@@ -26,5 +26,9 @@
     {
         "id": 6,
         "name": "Deutherium solution"
+    },
+    {
+        "id": 7,
+        "name": "Small transporter"
     }
 ]

@@ -1,10 +1,10 @@
 use bigdecimal::{BigDecimal, ToPrimitive, Zero};
 use diesel::prelude::*;
+use rand::Rng;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 use std::time::SystemTime;
-use rand::Rng;
 
 use super::super::defines::RECIPES;
 use super::schema;
@@ -104,13 +104,12 @@ impl Planet {
         let system = rng.gen_range(1, MAX_SOLAR_SYSTEMS);
         let planet = rng.gen_range(1, MAX_PLANETS);
 
-       let new_pos = galaxy.to_string() + ":" + &system.to_string() + ":" + &planet.to_string();
+        let new_pos = galaxy.to_string() + ":" + &system.to_string() + ":" + &planet.to_string();
 
         let existing = planets
             .filter(position.eq(new_pos.clone()))
             .load::<Planet>(conn)
             .unwrap();
-        
         if existing.len() != 0 {
             return self.assign_new_coord(conn);
         }
@@ -123,13 +122,13 @@ impl Planet {
     pub fn get_solar_system(galaxy: i32, system: i32, conn: &diesel::PgConnection) -> Vec<Planet> {
         use schema::planets::dsl::*;
 
-       let new_pos = galaxy.to_string() + ":" + &system.to_string() + ":%";
+        let new_pos = galaxy.to_string() + ":" + &system.to_string() + ":%";
 
         planets
             .filter(position.like(new_pos.clone()))
             .load::<Planet>(conn)
             .unwrap()
-        }
+    }
 
     fn get_production_context(
         processors: Vec<Rc<RefCell<Processor>>>,
@@ -191,7 +190,7 @@ impl Planet {
                     * BigDecimal::from(processor.user_ratio as f64 / 100.0);
             }
 
-            if processor.recipe != 3  && use_processor_ratio == true {
+            if processor.recipe != 3 && use_processor_ratio == true {
                 processor.ratio = (ratio.clone()
                     * elec_ratio.clone()
                     * BigDecimal::from(processor.user_ratio as f64 / 100.0))
@@ -336,7 +335,6 @@ impl Planet {
                     guard.ratio = value.ratio.with_prec(6).clone();
                     guard.save(conn);
                 }
-
             }
             prod_res.insert(
                 value.id.clone(),
@@ -353,13 +351,11 @@ impl Planet {
 
         let technologies = Technology::fetch_by_planet(&self.id, conn).unwrap();
 
-
-
         for (key, value) in global_production_context2.iter_mut() {
             // science_pack
             if *key == 3 && technologies.current_research == -1 {
                 value.consumed = BigDecimal::zero();
-            } 
+            }
 
             value.rate = (value.produced.clone() - value.consumed.clone()) / elapsed.clone();
 
@@ -373,9 +369,7 @@ impl Planet {
                 value.produced.with_prec(6).clone() - value.consumed.with_prec(6).clone()
         }
 
-        let science_packs = global_production_context2
-            .entry(3)
-            .or_default();
+        let science_packs = global_production_context2.entry(3).or_default();
 
         Technology::refresh(
             &self.player_id,
