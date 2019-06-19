@@ -12,10 +12,11 @@ INSERT INTO players (email, username, password) VALUES ('toto', 'toto', 'toto');
 CREATE TABLE planets (
     id SERIAL PRIMARY KEY,
     player_id INTEGER REFERENCES players(id) NOT NULL,
-    name VARCHAR NOT NULL
+    name VARCHAR NOT NULL,
+    position VARCHAR NOT NULL
 );
 
-INSERT INTO planets (player_id, name) VALUES (1, 'toto');
+INSERT INTO planets (player_id, name, position) VALUES (1, 'toto', '1:1:1');
 
 CREATE TABLE inventories (
     id SERIAL PRIMARY KEY,

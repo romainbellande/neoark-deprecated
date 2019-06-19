@@ -13,6 +13,7 @@ table! {
         id -> Int4,
         player_id -> Int4,
         name -> Varchar,
+        position -> Varchar,
     }
 }
 

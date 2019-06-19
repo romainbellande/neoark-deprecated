@@ -91,7 +91,7 @@ impl Player {
         user.save(&conn);
 
         Planet::create_for(user.id, conn);
-
+        
         Some(user)
     }
 

@@ -4,11 +4,16 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 use std::time::SystemTime;
+use rand::Rng;
 
 use super::super::defines::RECIPES;
 use super::schema;
 use super::schema::planets;
 use super::{Inventory, Processor, Technology};
+
+const MAX_GALAXIES: u32 = 12;
+const MAX_SOLAR_SYSTEMS: u32 = 30;
+const MAX_PLANETS: u32 = 15;
 
 #[derive(Default, Debug, Clone)]
 pub struct ProductionContext {
@@ -57,6 +62,7 @@ impl ProductionContextRes {
 pub struct Planet {
     pub player_id: i32,
     pub name: String,
+    pub position: String,
 }
 
 impl Planet {
@@ -65,6 +71,7 @@ impl Planet {
             id: -1,
             player_id,
             name,
+            position: "1:1:1".to_string(),
         }
     }
 
@@ -80,10 +87,49 @@ impl Planet {
     pub fn create_for(user_id: i32, conn: &diesel::PgConnection) {
         let mut planet = Planet::new(user_id, "NewPlanet".to_string());
 
+        planet.assign_new_coord(conn);
+
         planet.save(conn);
 
         Inventory::new(user_id, planet.id).save(conn);
+        Technology::new(user_id, planet.id).save(conn);
     }
+
+    pub fn assign_new_coord(&mut self, conn: &diesel::PgConnection) {
+        use schema::planets::dsl::*;
+
+        let mut rng = rand::thread_rng();
+
+        let galaxy = rng.gen_range(1, MAX_GALAXIES);
+        let system = rng.gen_range(1, MAX_SOLAR_SYSTEMS);
+        let planet = rng.gen_range(1, MAX_PLANETS);
+
+       let new_pos = galaxy.to_string() + ":" + &system.to_string() + ":" + &planet.to_string();
+
+        let existing = planets
+            .filter(position.eq(new_pos.clone()))
+            .load::<Planet>(conn)
+            .unwrap();
+        
+        if existing.len() != 0 {
+            return self.assign_new_coord(conn);
+        }
+
+        self.position = new_pos;
+
+        self.save(conn);
+    }
+
+    pub fn get_solar_system(galaxy: i32, system: i32, conn: &diesel::PgConnection) -> Vec<Planet> {
+        use schema::planets::dsl::*;
+
+       let new_pos = galaxy.to_string() + ":" + &system.to_string() + ":%";
+
+        planets
+            .filter(position.like(new_pos.clone()))
+            .load::<Planet>(conn)
+            .unwrap()
+        }
 
     fn get_production_context(
         processors: Vec<Rc<RefCell<Processor>>>,
