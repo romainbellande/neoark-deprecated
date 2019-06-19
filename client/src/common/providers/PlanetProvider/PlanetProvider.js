@@ -2,7 +2,7 @@ import React, { createContext, useState } from 'react';
 import { node, func } from 'prop-types';
 
 import withContextFactory from '../../helpers/with-context-factory';
-import buildingConfigurationssMock from '../../mocks/building-configurations';
+import buildingConfigurationsMock from '../../mocks/building-configurations';
 import buildingsMock from '../../mocks/buildings';
 import recipes from '../../mocks/recipes.json';
 import items from '../../mocks/items.json';
@@ -17,7 +17,7 @@ export const withPlanetContext = withContextFactory(PlanetContext);
 const PlanetProvider = ({ children, client }) => {
   const [selectedBuildingId, setSelectedBuildingId] = useState(null);
   const [buildingConfigurations] = useState(
-    buildingConfigurationsFormatter(buildingConfigurationssMock, recipes)
+    buildingConfigurationsFormatter(buildingConfigurationsMock, recipes)
   );
   const [buildings] = useState(buildingsMock);
   const [inventory, setInventory] = useState(null);
@@ -34,7 +34,7 @@ const PlanetProvider = ({ children, client }) => {
     const formattedProcessors = processorsFormatter(
       data.processors,
       recipes,
-      buildingConfigurationssMock
+      buildingConfigurationsMock
     );
     setProcessors(formattedProcessors);
     setProduction(data.production);
@@ -66,7 +66,7 @@ const PlanetProvider = ({ children, client }) => {
 
   const getMaxProcessorElectricityConsumption = processorId => {
     const processor = getProcessor(processorId);
-    return (processor.recipe.conso * processor.level *  1.1 ** processor.level).toFixed(1);
+    return (processor.recipe.conso * processor.level * 1.1 ** processor.level).toFixed(1);
   };
 
   const getProcessorElectricityConsumption = processorId =>
@@ -91,6 +91,8 @@ const PlanetProvider = ({ children, client }) => {
 
   const getTotalElectricityConsumption = () =>
     Math.floor(getMaxTotalElectricityConsumption() * electricity.currentPercent);
+
+  // Other
 
   const value = {
     state: {
