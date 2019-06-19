@@ -74,7 +74,7 @@ const PlanetProvider = ({ children, client }) => {
   };
 
   const getProcessorsByRecipeId = recipeId =>
-    processors.filter(({ recipe }) => recipe.id === recipeId);
+    processors.filter(({ recipe }) => recipe && recipe.id === recipeId);
 
   const getMaxProcessorsProductionByRecipeId = recipeId =>
     getProcessorsByRecipeId(recipeId)
