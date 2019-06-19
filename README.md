@@ -49,3 +49,21 @@ cargo run
 ```
 
 # Go to http://localhost:8000/
+
+TODO
+
+Server:
+    - Technologies
+    - Research tree
+    - Research processing
+    - Fleets
+    - Galaxy positioning
+
+
+Client:
+    - Compute electricity producing/consuming
+    - Compute items prod/consum
+    - User ratio
+    - Progress bar for processor upgrade and build
+    - Progress bar for resource production
+    - More info on actual recipe
