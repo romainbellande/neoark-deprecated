@@ -4,6 +4,10 @@ import green from '@material-ui/core/colors/green';
 export default () => ({
   production: {
     display: 'flex',
+    fontSize: '10px',
+    // float: 'left',
+    display: 'flex',
+    justifyContent: "flex-end"
   },
   productionItem: {
     display: 'flex',

@@ -14,27 +14,26 @@ function ResourceNavItem({ name, consumed, produced, currentPercent, netAmount, 
         }}
       >
         <div>
-          <b>{name}: {netAmount}</b>
+          <b>{name}:</b>
         </div>
-        <div class="small" className={classes.production}>
-          <div className={classes.productionItem}>
-            Produces
-            {consumed > 0
-              ? (<span style={{ color: 'green' }}> <KeyboardArrowUpIcon /> {consumed}</span>)
-              : (<span style={{ color: 'red' }}><KeyboardArrowDownIcon /> {consumed}</span>)
-            }
-          </div>
+        {netAmount}
+        <div className={classes.production} >
+          {consumed > 0
+            ? (<span style={{ color: 'green' }}> <KeyboardArrowUpIcon /> +{consumed}</span>)
+            : (<span style={{ color: 'red' }}><KeyboardArrowDownIcon /> {consumed}</span>)
+          }
+          {/* {consumed <= 0
+            ?
+            (<span>
+              ({produced > 0
+                ? (<span style={{ color: 'green' }}> +{produced}</span>)
+                : (<span style={{ color: 'red' }}> {produced}</span>)
+              })
+          </span>)
+            : (<span></span>)
+          } */}
         </div>
-        <div className={classes.production}>
-          <div className={classes.productionItem}>
-            Demand
-            {produced > 0
-              ? (<span style={{ color: 'green' }}> <KeyboardArrowUpIcon /> {produced}</span>)
-              : (<span style={{ color: 'red' }}><KeyboardArrowDownIcon /> {produced}</span>)
-            }
-          </div>
-        </div>
-      </ListItemText>
+      </ListItemText >
     </ListItem >
   );
 }
