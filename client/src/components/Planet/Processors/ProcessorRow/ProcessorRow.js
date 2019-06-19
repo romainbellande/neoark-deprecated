@@ -33,6 +33,9 @@ function ProcessorRow({
   upgradeFinish,
   fetchCurrentPlanet,
   onRecipeChange,
+  getElectricityConsumption,
+  getMaxElectricityConsumption,
+  getGeneratorProduction,
 }) {
   const [updateRemainingTime, setUpdateRemainingTime] = useState(null);
   const [newRecipe, setNewRecipe] = useState('');
@@ -117,6 +120,8 @@ function ProcessorRow({
     });
 
   const isElectricityGenerator = recipe && recipe.id === 3;
+  const displayElectricityConsumptionPercent = () =>
+    `~ ${getElectricityConsumption(id)}/${getMaxElectricityConsumption(id)}`;
 
   return recipe ? (
     <>
@@ -130,7 +135,11 @@ function ProcessorRow({
           </HtmlTooltip>
         </TableCell>
         <TableCell align="right">{(ratio * 100).toFixed(2)}%</TableCell>
-        <TableCell align="right">{!isElectricityGenerator ? '27/30' : '/'}</TableCell>
+        <TableCell align="right">
+          {!isElectricityGenerator
+            ? displayElectricityConsumptionPercent()
+            : getGeneratorProduction(id)}
+        </TableCell>
         <TableCell align="right">
           {!!updateRemainingTime && upgradeFinish ? (
             <div>{moment(updateRemainingTime, 'x').format('mm:ss')}</div>
@@ -237,6 +246,9 @@ function ProcessorRow({
 }
 
 ProcessorRow.propTypes = {
+  getMaxElectricityConsumption: func.isRequired,
+  getElectricityConsumption: func.isRequired,
+  getGeneratorProduction: func.isRequired,
   onRecipeChange: func.isRequired,
   items: arrayOf(shape({})).isRequired,
   fetchCurrentPlanet: func.isRequired,
