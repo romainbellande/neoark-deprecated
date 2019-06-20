@@ -9,15 +9,15 @@ export default _.flow([
   withPlanetContext(
     null,
     ({
-      getInventoryItemInitialProgress,
-      getProcessorsProductionByRecipeId,
       getInventoryItemDurationInMs,
       getInventoryItemRemainingTimeInMs,
+      isResourceProductionPaused,
+      getProcessorsProductionByRecipeId,
     }) => ({
-      currentProgress: getInventoryItemInitialProgress,
-      productionPerHour: getProcessorsProductionByRecipeId,
       getDurationInMs: getInventoryItemDurationInMs,
       getRemainingTimeInMs: getInventoryItemRemainingTimeInMs,
+      isResourceProductionPaused,
+      getProductionByHour: getProcessorsProductionByRecipeId,
     })
   ),
   withStyles(styles),

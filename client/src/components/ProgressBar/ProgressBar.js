@@ -3,7 +3,7 @@ import { number, func, shape, bool } from 'prop-types';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import moment from 'moment';
 
-const ProgressBar = ({ end, duration, onComplete, classes, loop }) => {
+const ProgressBar = ({ end, duration, onComplete, classes, loop, pause }) => {
   const [start, setStart] = useState(end - duration);
   const now = () => Math.ceil(new Date().getTime());
   const getElapsedTime = currentStart => now() - currentStart;
@@ -14,29 +14,33 @@ const ProgressBar = ({ end, duration, onComplete, classes, loop }) => {
 
   useEffect(() => {
     function progress() {
-      setCompleted(prevValue => {
-        if (prevValue === 100) {
-          if (loop) {
-            setStart(new Date().getTime());
+      if (!pause) {
+        setCompleted(prevValue => {
+          let newValue = getPercent(start);
+          if (prevValue === 100) {
+            if (loop) {
+              setStart(new Date().getTime());
+            }
+            newValue = loop ? 0 : 100;
+          } else if (getPercent(start) >= 100) {
+            onComplete();
+            if (loop) {
+              setStart(new Date().getTime());
+            }
+            newValue = loop ? 0 : 100;
           }
-          return loop ? 0 : 100;
-        }
-        if (getPercent(start) >= 100) {
-          onComplete();
-          if (loop) {
-            setStart(new Date().getTime());
-          }
-          return loop ? 0 : 100;
-        }
-        return getPercent(start);
-      });
+
+          return newValue;
+        });
+      }
     }
 
     const timer = setInterval(progress, tick);
+
     return () => {
       clearInterval(timer);
     };
-  }, [getPercent, start]);
+  }, [getPercent, start, pause]);
 
   return (
     <div className={classes.root}>
@@ -46,7 +50,9 @@ const ProgressBar = ({ end, duration, onComplete, classes, loop }) => {
         classes={{ root: classes.progressRoot }}
       />
       <span className={classes.timer}>
-        {moment(start + duration + 1000 - new Date().getTime(), 'x').format('mm:ss')}
+        {pause
+          ? 'paused'
+          : moment(start + duration + 1000 - new Date().getTime(), 'x').format('mm:ss')}
       </span>
     </div>
   );
@@ -58,10 +64,12 @@ ProgressBar.propTypes = {
   duration: number.isRequired,
   onComplete: func.isRequired,
   loop: bool,
+  pause: bool,
 };
 
 ProgressBar.defaultProps = {
   loop: false,
+  pause: false,
 };
 
 export default ProgressBar;

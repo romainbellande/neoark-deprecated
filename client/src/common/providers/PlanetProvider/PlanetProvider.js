@@ -125,14 +125,19 @@ const PlanetProvider = ({ children, client }) => {
   const getInventoryItemInitialProgress = inventoryItemId =>
     getInventoryItem(inventoryItemId).currentPercent;
 
-  const getInventoryItemDurationInMs = inventoryItemId =>
-    (1 / getProcessorsProductionByRecipeId(inventoryItemId)) * 3600 * 1000;
+  const getInventoryItemDurationInMs = inventoryItemId => {
+    const processorsProduction = getProcessorsProductionByRecipeId(inventoryItemId);
+    return processorsProduction === 0 ? 0 : (1 / processorsProduction) * 3600 * 1000;
+  };
 
   const getInventoryItemRemainingTimeInMs = inventoryItemId => {
     const percent = getInventoryItemInitialProgress(inventoryItemId);
     const percentRest = (100 - percent * 100) / 100;
     return percentRest * getInventoryItemDurationInMs(inventoryItemId);
   };
+
+  const isResourceProductionPaused = resourceId =>
+    getProcessorsProductionByRecipeId(resourceId) === 0;
 
   const value = {
     state: {
@@ -163,6 +168,7 @@ const PlanetProvider = ({ children, client }) => {
       getProcessorsProductionByRecipeId,
       getInventoryItemDurationInMs,
       getInventoryItemRemainingTimeInMs,
+      isResourceProductionPaused,
     },
   };
 

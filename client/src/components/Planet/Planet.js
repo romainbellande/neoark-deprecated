@@ -16,13 +16,13 @@ const Planet = ({ match, fetchPlanet, production, inventory, planet, processors 
       const resourcesValue = Object.keys(inventory).map(key => {
         const resourceItem = items.find(item => item.id === parseInt(key, 10));
         const resourceProduction = production[key];
-        const { id, name } = resourceItem;
+        const { recipeId, name } = resourceItem;
         const netRate = resourceProduction ? resourceProduction.actual_rate : 0;
         const rate = resourceProduction ? resourceProduction.producing_rate : 0;
         const value = inventory[key];
 
         return {
-          id,
+          id: recipeId,
           name,
           value,
           rate: parseFloat(netRate),
