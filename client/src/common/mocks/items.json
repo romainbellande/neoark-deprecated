@@ -1,34 +1,42 @@
 [
     {
         "id": 0,
-        "name": "Metal"
+        "name": "Metal",
+        "recipeId": 0
     },
     {
         "id": 1,
-        "name": "Crystal"
+        "name": "Crystal",
+        "recipeId": 1
     },
     {
         "id": 2,
-        "name": "Deutherium"
+        "name": "Deutherium",
+        "recipeId": 2
     },
     {
         "id": 3,
-        "name": "Science pack"
+        "name": "Science pack",
+        "recipeId": 4
     },
     {
         "id": 4,
-        "name": "Gear weel"
+        "name": "Gear weel",
+        "recipeId": 5
     },
     {
         "id": 5,
-        "name": "Crystal chunk"
+        "name": "Crystal chunk",
+        "recipeId": 6
     },
     {
         "id": 6,
-        "name": "Deutherium solution"
+        "name": "Deutherium solution",
+        "recipeId": 7
     },
     {
         "id": 7,
-        "name": "Small transporter"
+        "name": "Small transporter",
+        "recipeId": 8
     }
 ]
