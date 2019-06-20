@@ -10,7 +10,11 @@ const ProgressBar = ({ end, duration, onComplete, classes, loop, pause }) => {
   const getPercent = currentStart => (getElapsedTime(currentStart) * 100) / duration;
 
   const [completed, setCompleted] = useState(getPercent(start));
-  const tick = 200;
+  let tick = 200;
+
+  if (end - start < tick) {
+    tick = Math.abs(end - start);
+  }
 
   useEffect(() => {
     function progress() {
@@ -28,6 +32,10 @@ const ProgressBar = ({ end, duration, onComplete, classes, loop, pause }) => {
               setStart(new Date().getTime());
             }
             newValue = loop ? 0 : 100;
+          }
+
+          if (newValue >= 100) {
+            return 100;
           }
 
           return newValue;
