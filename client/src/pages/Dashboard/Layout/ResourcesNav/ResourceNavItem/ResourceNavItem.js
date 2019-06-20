@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { shape, number, string, func } from 'prop-types';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -17,11 +17,16 @@ function ResourceNavItem({
 }) {
   let duration;
   let end;
+  const [amount, setAmount] = useState(netAmount);
 
   if (id !== 3) {
     duration = getDurationInMs(id);
     end = new Date().getTime() + getRemainingTimeInMs(id);
   }
+
+  const onProgressComplete = () => {
+    setAmount(prevValue => prevValue + 1);
+  };
 
   return (
     <ListItem className={classes.categoryHeader}>
@@ -31,7 +36,7 @@ function ResourceNavItem({
         }}
       >
         <div className={classes.production}>
-          {name}:<span style={{ marginLeft: '3px' }}>{netAmount}</span>
+          {name}:<span style={{ marginLeft: '3px' }}>{Math.ceil(amount)}</span>
           <div className={classes.productionItem}>
             (
             {getProductionByHour(id) > 0 ? (
@@ -46,7 +51,7 @@ function ResourceNavItem({
           <ProgressBar
             end={end}
             duration={duration}
-            onComplete={() => {}}
+            onComplete={onProgressComplete}
             loop
             pause={isResourceProductionPaused(id)}
           />
