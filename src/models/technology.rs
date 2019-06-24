@@ -1,12 +1,9 @@
 use bigdecimal::{BigDecimal, Zero};
 use diesel::prelude::*;
-use std::cell::RefCell;
 use std::collections::HashMap;
-use std::rc::Rc;
 use std::time::SystemTime;
 
-use super::super::defines::TECHNOLOGIES;
-use super::processor::*;
+use super::super::defines::{RECIPES, TECHNOLOGIES};
 use super::schema;
 use super::schema::technologies;
 
@@ -109,7 +106,8 @@ impl Technology {
 
         technologies.current_progress += science_consumed.clone();
         if remaining <= BigDecimal::zero() {
-            let mut searched: HashMap<i32, BigDecimal> = serde_json::from_str(&technologies.searched).unwrap();
+            let mut searched: HashMap<i32, BigDecimal> =
+                serde_json::from_str(&technologies.searched).unwrap();
 
             *inventory
                 .entry(3)
@@ -125,5 +123,25 @@ impl Technology {
 
         technologies.last_update = SystemTime::now();
         technologies.save(conn);
+    }
+
+    pub fn is_recipe_researched_for(planet_id: i32, recipe_id: i32, conn: &diesel::PgConnection) -> bool {
+        let technologies = Self::fetch_by_planet(&planet_id, conn).unwrap();
+
+        technologies.is_recipe_researched(recipe_id)
+    }
+
+    pub fn is_recipe_researched(&self, recipe_id: i32) -> bool {
+        let recipe = RECIPES.get(&recipe_id).unwrap();
+
+        let searched: HashMap<i32, BigDecimal> = serde_json::from_str(&self.searched).unwrap();
+
+        for dep in &recipe.deps {
+            if searched.get(&dep).is_none() {
+                return false;
+            }
+        }
+
+        true
     }
 }

@@ -8,6 +8,7 @@ use super::db;
 use super::models::Player;
 use super::models::Planet;
 use super::models::Processor;
+use super::models::Technology;
 
 #[get("/by_planet/<planet_id>")]
 fn get(key: ApiKey, planet_id: i32, connection: db::Connection) -> Result<Json<Vec<Processor>>, NotFound<String>> {
@@ -186,7 +187,13 @@ fn set_recipe(
     }
 
     match &RECIPES.get(&recipe) {
-        Some(_) => processor.recipe = recipe,
+        Some(_) => {
+            if Technology::is_recipe_researched_for(processor.planet_id, recipe, &connection) {
+                processor.recipe = recipe;
+            } else {
+                return Err(NotFound("Recipe is not researched yet".to_string()));
+            }
+        },
         None => return Err(NotFound("No such recipe".to_string())),
     };
 

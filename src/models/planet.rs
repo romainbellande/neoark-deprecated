@@ -369,14 +369,16 @@ impl Planet {
                 value.produced.with_prec(6).clone() - value.consumed.with_prec(6).clone()
         }
 
-        let science_packs = global_production_context2.entry(3).or_default();
+        let science_packs = global_production_context2.get(&3);
 
-        Technology::refresh(
-            &self.player_id,
-            science_packs.consumed.clone(),
-            &mut total,
-            conn,
-        );
+        if let Some(science_packs) = science_packs {
+            Technology::refresh(
+                &self.player_id,
+                science_packs.consumed.clone(),
+                &mut total,
+                conn,
+            );
+        }
 
         let mut _processors = vec![];
         for processor in processors {

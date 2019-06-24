@@ -61,7 +61,7 @@ impl Processor {
 
     pub fn get_build_time(cost: &HashMap<i32, BigDecimal>) -> Duration {
         if dev_mode {
-            Duration::from_secs(10)
+            Duration::from_secs(5)
         } else {
             let metal = cost.get(&0).unwrap();
             let crystal = cost.get(&1).unwrap();

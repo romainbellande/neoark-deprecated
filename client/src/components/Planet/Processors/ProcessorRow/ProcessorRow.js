@@ -41,7 +41,7 @@ function ProcessorRow({
     <div>
       {upgradeCosts.map(({ id: costId, name, amount }) => (
         <div key={`cost-item-name-${costId}`}>
-          {name}: {amount * level}
+          {name}: {Math.floor(amount * 1.5 ** (level))}
         </div>
       ))}
     </div>

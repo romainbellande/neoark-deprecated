@@ -7,9 +7,10 @@ const RECIPES_PATH: &str = "./client/src/common/mocks/recipes.json";
 const BUILDINGS_PATH: &str = "./client/src/common/mocks/building-configurations.json";
 const TECHNOLOGIES_PATH: &str = "./client/src/common/mocks/technologies.json";
 const SHIPS_PATH: &str = "./client/src/common/mocks/technologies.json";
+const ITEMS_PATH: &str = "./client/src/common/mocks/items.json";
 
 #[derive(Serialize, Deserialize)]
-pub struct Item {
+pub struct Stack {
     pub id: i32,
     pub amount: BigDecimal,
 }
@@ -20,15 +21,9 @@ pub struct Recipe {
     pub name: String,
     pub speed: i32,
     pub conso: i32,
-    pub i: Vec<Item>,
-    pub o: Vec<Item>,
-}
-
-impl Recipe {
-    // pub fn new() -> Recipe {
-    //     Recipe {
-    //     }
-    // }
+    pub deps: Vec<i32>,
+    pub i: Vec<Stack>,
+    pub o: Vec<Stack>,
 }
 
 lazy_static! {
@@ -53,11 +48,39 @@ lazy_static! {
 }
 
 #[derive(Serialize, Deserialize)]
+pub struct Item {
+    pub id: i32,
+    pub name: String,
+    pub recipe_id: i32,
+}
+
+lazy_static! {
+    pub static ref ITEMS: HashMap<i32, Item> = {
+        let mut m = HashMap::new();
+
+        let mut file = File::open(ITEMS_PATH).expect("could not open file");
+
+        let mut contents = String::new();
+
+        file.read_to_string(&mut contents).unwrap();
+
+        let items: Vec<Item> =
+            serde_json::from_str(&contents).expect("Cannot deserialize items.json");
+
+        for item in items {
+            m.insert(item.id, item);
+        }
+
+        m
+    };
+}
+
+#[derive(Serialize, Deserialize)]
 pub struct Building {
     pub id: i32,
     pub name: String,
     pub level_multiplier: f64,
-    pub costs: Vec<Item>,
+    pub costs: Vec<Stack>,
 }
 
 lazy_static! {
@@ -85,7 +108,7 @@ lazy_static! {
 pub struct Technology {
     pub id: i32,
     pub name: String,
-    pub cost: Vec<Item>,
+    pub cost: Vec<Stack>,
     pub deps: Vec<i32>,
 }
 

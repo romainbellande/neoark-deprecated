@@ -9,6 +9,21 @@ table! {
 }
 
 table! {
+    movements (id) {
+        id -> Int4,
+        sender_player_id -> Int4,
+        receiver_player_id -> Int4,
+        sender_planet_id -> Int4,
+        receiver_planet_id -> Int4,
+        ships -> Varchar,
+        resources -> Varchar,
+        speed -> Int4,
+        intention -> Int4,
+        arrival_time -> Timestamp,
+    }
+}
+
+table! {
     planets (id) {
         id -> Int4,
         player_id -> Int4,
@@ -61,6 +76,7 @@ joinable!(technologies -> players (player_id));
 
 allow_tables_to_appear_in_same_query!(
     inventories,
+    movements,
     planets,
     players,
     processors,
