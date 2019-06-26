@@ -1,5 +1,7 @@
 use rocket_contrib::serve::StaticFiles;
 
+// use neoark_lib::db;
+
 use super::db;
 use super::routes::*;
 

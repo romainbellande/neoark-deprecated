@@ -3,6 +3,7 @@ use rocket::response::status::NotFound;
 use rocket::{routes, Route};
 use rocket_contrib::json::{Json, JsonValue};
 
+use neoark_lib::controllers::planet_controller;
 use super::db;
 use super::models::Planet;
 use super::models::Player;
@@ -58,7 +59,8 @@ fn get_one(
         return Err(NotFound("Bad planet id".to_string()));
     }
 
-    let (inventory, processors, prod, elec_summary) = planet.refresh(&connection);
+    // let (inventory, processors, prod, elec_summary) = planet.refresh(&connection);
+    let (inventory, processors, prod, elec_summary) = planet_controller::pre_refresh(planet.id, &connection);
 
     let ((elec_prod, elec_conso), elec_ratio) = elec_summary.clone();
 

@@ -9,6 +9,7 @@ use super::db;
 use super::models::Planet;
 use super::models::Player;
 use super::models::Technology;
+use neoark_lib::controllers::planet_controller;
 
 #[get("/<planet_id>")]
 fn get(
@@ -36,7 +37,7 @@ fn get(
         return Err(NotFound("Bad planet id".to_string()));
     }
 
-    planet.refresh(&connection);
+    planet_controller::pre_refresh(planet.id, &connection);
 
     let techno = Technology::fetch_by_planet(&planet_id, &connection).unwrap();
 
@@ -66,7 +67,17 @@ fn set_techno(
         return Err(NotFound("Player not found".to_string()));
     }
 
-    let _ = Planet::refresh_for(planet_id, &connection);
+    let player = player.unwrap();
+
+    let planet = Planet::fetch(planet_id, &connection);
+
+    let mut planet = planet.unwrap();
+
+    if planet.player_id != player.id {
+        return Err(NotFound("Bad planet id".to_string()));
+    }
+
+    planet_controller::pre_refresh(planet.id, &connection);
 
     let mut technologies = Technology::fetch_by_planet(&planet_id, &connection).unwrap();
 
