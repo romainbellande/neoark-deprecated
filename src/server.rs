@@ -27,6 +27,7 @@ impl Server {
             .mount("/api/v1/processors", processor_route::mount())
             .mount("/api/v1/technologies", technology_route::mount())
             .mount("/api/v1/galaxy", galaxy_route::mount())
+            .mount("/api/v1/movements", movement_route::mount())
             .launch();
     }
 }
